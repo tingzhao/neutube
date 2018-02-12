@@ -317,9 +317,8 @@ MainWindow::MainWindow(QWidget *parent) :
   m_stackViewManager = new ZStackViewManager(this);
   m_flyemDataLoader = new ZFlyEmDataLoader(this);
 
-  m_progressManager = new ZProgressManager(this);
-  m_specialProgressReporter.setProgressBar(getProgressBar());
-  m_progressManager->setProgressReporter(&m_specialProgressReporter);
+//  m_progressManager = new ZProgressManager(this);
+//  m_progressManager->setProgressReporter(&m_specialProgressReporter);
 
   m_3dWindowFactory.setParentWidget(this);
 
@@ -371,14 +370,15 @@ void MainWindow::initDialog()
   m_autosaveSwcDialog = new AutosaveSwcListDialog(this);
   m_movieDlg = new MovieDialog(this);
 
-  m_progress = new QProgressDialog(this);
-  m_progress->setRange(0, 100);
-  m_progress->setWindowModality(Qt::WindowModal);
-  m_progress->setAutoClose(true);
-  //m_progress->setWindowFlags(Qt::Dialog|Qt::WindowStaysOnTopHint);
-  m_progress->setCancelButton(0);
+  m_progress = NULL;
+//  m_progress = new QProgressDialog(this);
+//  m_progress->setRange(0, 100);
+//  m_progress->setWindowModality(Qt::WindowModal);
+//  m_progress->setAutoClose(true);
+//  //m_progress->setWindowFlags(Qt::Dialog|Qt::WindowStaysOnTopHint);
+//  m_progress->setCancelButton(0);
 
-  connect(this, SIGNAL(progressDone()), m_progress, SLOT(reset()));
+  connect(this, SIGNAL(progressDone()), this, SLOT(endProgress()));
   connect(this, SIGNAL(progressAdvanced(double)),
           this, SLOT(advanceProgress(double)));
   connect(this, SIGNAL(progressStarted(QString,int)),
@@ -4861,6 +4861,17 @@ void MainWindow::on_actionMake_Projection_triggered()
 
 QProgressDialog* MainWindow::getProgressDialog()
 {
+  if (m_progress == NULL) {
+    m_progress = new QProgressDialog(this);
+    m_progress->setRange(0, 100);
+    m_progress->setWindowModality(Qt::WindowModal);
+    m_progress->setAutoClose(true);
+    //m_progress->setWindowFlags(Qt::Dialog|Qt::WindowStaysOnTopHint);
+    m_progress->setCancelButton(0);
+//    m_specialProgressReporter.setProgressBar(
+//          m_progress->findChild<QProgressBar*>());
+  }
+
   return m_progress;
 }
 

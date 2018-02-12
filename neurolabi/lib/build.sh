@@ -21,11 +21,11 @@ then
   echo 'Building libfftw3 ...'
   uncompress_lib fftw-3.3.2
   cd fftw-3.3.2
-  ./configure --enable-shared=no --with-pic --prefix=${libdir}/fftw3
+  ./configure --disable-fortran --enable-shared=no --with-pic --prefix=${libdir}/fftw3
   make
   make install
 
-  ./configure --enable-shared=no --enable-float --with-pic --prefix=${libdir}/fftw3
+  ./configure --disable-fortran --enable-shared=no --enable-float --with-pic --prefix=${libdir}/fftw3
   make
   make install
   cd ..

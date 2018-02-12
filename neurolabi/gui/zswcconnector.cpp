@@ -6,6 +6,8 @@
 
 using namespace std;
 
+const double ZSwcConnector::DEFAULT_DIST_THRE = 20.0;
+
 ZSwcConnector::ZSwcConnector()
 {
   init();
@@ -13,7 +15,7 @@ ZSwcConnector::ZSwcConnector()
 
 void ZSwcConnector::init()
 {
-  m_minDist = 20.0;
+  m_minDist = DEFAULT_DIST_THRE;
   m_surfaceDist = false;
   m_dist = 0.0;
 }
@@ -217,7 +219,8 @@ ZGraph* ZSwcConnector::buildConnection(
     graph->removeEdge(edgeList);
 
 #ifdef _DEBUG_
-  graph->print();
+    std::cout << "Connection graph:" << std::endl;
+    graph->print();
 #endif
 #if 1
     if (graph->size() > 1) {
@@ -297,4 +300,36 @@ ZGraph* ZSwcConnector::buildConnection(const set<Swc_Tree_Node *> &nodeSet)
 void ZSwcConnector::setResolution(const ZResolution &resolution)
 {
   m_resolution = resolution;
+}
+
+bool ZSwcConnector::connect(Swc_Tree *tree)
+{
+  ZSwcTree treeObj;
+  treeObj.setData(tree);
+
+  bool changed = false;
+
+  std::vector<Swc_Tree_Node*> nodeArray = treeObj.getSwcTreeNodeArray();
+  if (nodeArray.size() > 1) {
+    ZGraph *graph = buildConnection(nodeArray);
+    if (graph->size() > 0) {
+      for (size_t i = 0; i < graph->size(); ++i) {
+        if (graph->edgeWeight(i) > 0.0) {
+          int e1 = graph->edgeStart(i);
+          int e2 = graph->edgeEnd(i);
+
+          Swc_Tree_Node *upNode = nodeArray[e1];
+          Swc_Tree_Node *downNode = nodeArray[e2];
+          SwcTreeNode::setAsRoot(downNode);
+          SwcTreeNode::setParent(downNode, upNode);
+          changed = true;
+        }
+      }
+    }
+
+    delete graph;
+  }
+  treeObj.setData(NULL, ZSwcTree::LEAVE_ALONE);
+
+  return changed;
 }

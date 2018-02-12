@@ -36,6 +36,10 @@ public:
   void setResolution(const ZResolution &resolution);
   void useSurfaceDist(bool on);
 
+  bool connect(Swc_Tree *tree);
+
+  static const double DEFAULT_DIST_THRE;
+
 private:
   void init();
   double computeDistance(

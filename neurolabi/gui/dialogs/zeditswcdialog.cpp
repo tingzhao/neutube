@@ -16,6 +16,8 @@
 #include "tz_xml_utils.h"
 #include "tz_random.h"
 #include "tz_geo3d_utils.h"
+#include "zwidgetmessage.h"
+#include "zswcconnector.h"
 
 #include "zswctree.h"
 
@@ -39,8 +41,23 @@ ZEditSwcDialog::~ZEditSwcDialog()
 
 void ZEditSwcDialog::_init()
 {
+  //Need to set the style sheet at the beginning and the title of a group box
+  //should be non-empty to have the effect.
+  setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px}");
+
+  QVBoxLayout *mainLayout = new QVBoxLayout;
+  QTabWidget *tabWidget = new QTabWidget(this);
+  QWidget *settingWidget = new QWidget(this);
+//  QWidget *infoWidget = new QWidget(this);
+
+  m_messageWidget = new QTextEdit(this);
+  m_messageWidget->setReadOnly(true);
+
+  tabWidget->addTab(settingWidget, "Settings");
+  tabWidget->addTab(m_messageWidget, "Message");
+
   m_inputFileEdit = new QLineEdit;
-  m_inputFileEdit->setReadOnly(true);
+//  m_inputFileEdit->setReadOnly(true);
   m_selectInputFileButton = new QToolButton(this);
   m_selectInputFileButton->setText(tr("..."));
   m_selectInputFileButton->setToolTip(tr("Select Input File"));
@@ -63,6 +80,7 @@ void ZEditSwcDialog::_init()
   connect(m_selectSubtractFileButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
   m_searchFileEdit = new QLineEdit;
   m_searchFileEdit->setReadOnly(true);
+  m_searchFileEdit->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
   m_selectSearchFileButton = new QToolButton(this);
   m_selectSearchFileButton->setText(tr("..."));
   signalMapper->setMapping(m_selectSearchFileButton, m_selectSearchFileButton);
@@ -87,23 +105,62 @@ void ZEditSwcDialog::_init()
   connect(m_exitButton, SIGNAL(clicked()), this, SLOT(reject()));
   connect(m_runButton, SIGNAL(clicked()), this, SLOT(runOperations()));
 
-  QVBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(m_inputGroupBox);
-  mainLayout->addWidget(m_outputGroupBox);
-  mainLayout->addWidget(m_operationGroupBox);
+  QVBoxLayout *settingLayout = new QVBoxLayout;
+  settingLayout->addWidget(m_inputGroupBox);
+  settingLayout->addWidget(m_outputGroupBox);
+  settingLayout->addWidget(m_operationGroupBox);
+
+  settingWidget->setLayout(settingLayout);
+
+  mainLayout->addWidget(tabWidget);
   mainLayout->addWidget(m_buttonBox);
+
   setLayout(mainLayout);
 
-  setWindowTitle(tr("Edit Swc"));
+  setWindowTitle(tr("Edit Swc (Experimental)"));
+
+  m_useOtherFileButton = NULL;
+  m_useCurrentSwcButton = NULL;
+}
+
+void ZEditSwcDialog::dump(const QString &msg)
+{
+  m_messageWidget->append(msg);
+}
+
+void ZEditSwcDialog::dump(const QStringList &msg)
+{
+  foreach (const QString &s, msg) {
+    dump(s);
+  }
+}
+
+void ZEditSwcDialog::dump(const ZWidgetMessage &msg)
+{
+  dump(msg.toHtmlString());
+}
+
+void ZEditSwcDialog::dumpWarning(const QString &msg)
+{
+  dump(ZWidgetMessage(msg, NeuTube::MSG_WARNING));
+}
+
+void ZEditSwcDialog::clearMessage()
+{
+  m_messageWidget->clear();
+  m_summary.clear();
 }
 
 void ZEditSwcDialog::createInputGroupBox()
 {
-  m_inputGroupBox = new QGroupBox(tr("Input"), this);
+  m_inputGroupBox = new QGroupBox(tr(" "), this);
+  m_inputGroupBox->setObjectName("m_inputGroupBox");
+//  setStyleSheet("QGroupBox#m_inputGroupBox{padding-top:5px; margin-top:-15px}");
+
   QVBoxLayout *layout = new QVBoxLayout;
   QHBoxLayout *hlayout = new QHBoxLayout;
   if (m_swcTreeList.empty()) {
-    hlayout->addWidget(new QLabel(tr("Input File:"), this));
+    hlayout->addWidget(new QLabel(tr("Input (File/Wildcard):"), this));
     hlayout->addWidget(m_inputFileEdit);
     hlayout->addWidget(m_selectInputFileButton);
     m_inputGroupBox->setLayout(hlayout);
@@ -126,11 +183,13 @@ void ZEditSwcDialog::createInputGroupBox()
 
 void ZEditSwcDialog::createOutputGroupBox()
 {
-  m_outputGroupBox = new QGroupBox(tr("Output"), this);
+  m_outputGroupBox = new QGroupBox(tr(" "), this);
+  m_inputGroupBox->setObjectName("m_outputGroupBox");
+//  setStyleSheet("QGroupBox#m_outputGroupBox{padding-top:5px; margin-top:-15px}");
   //m_openOutputFileCheckBox = new QCheckBox(tr("Open Output File after process"), this);
   QVBoxLayout *layout = new QVBoxLayout;
   QHBoxLayout *hlayout = new QHBoxLayout;
-  hlayout->addWidget(new QLabel(tr("Output File:"), this));
+  hlayout->addWidget(new QLabel(tr("Output (File/Directory):"), this));
   hlayout->addWidget(m_outputFileEdit);
   hlayout->addWidget(m_selectOutputFileButton);
   layout->addLayout(hlayout);
@@ -140,7 +199,9 @@ void ZEditSwcDialog::createOutputGroupBox()
 
 void ZEditSwcDialog::createOperationGroupBox()
 {
-  m_operationGroupBox = new QGroupBox(tr("Operations"), this);
+  m_operationGroupBox = new QGroupBox(tr(" "), this);
+  m_operationGroupBox->setObjectName("m_operationGroupBox");
+
   QGridLayout *layout = new QGridLayout;
   int row = 0;
 
@@ -161,24 +222,41 @@ void ZEditSwcDialog::createOperationGroupBox()
   m_searchPosXSpinBox = createDoubleSpinBox();
   m_searchPosYSpinBox = createDoubleSpinBox();
   m_searchPosZSpinBox = createDoubleSpinBox();
+
+  QLayout *searchLayout = new QHBoxLayout;
   QLabel *pl = new QLabel(tr("x:"), this);
   pl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-  layout->addWidget(pl, row, 1);
-  layout->addWidget(m_searchPosXSpinBox, row, 2);
+  searchLayout->addWidget(pl);
+  searchLayout->addWidget(m_searchPosXSpinBox);
+//  layout->addWidget(pl, row, 1);
+//  layout->addWidget(m_searchPosXSpinBox, row, 2);
   pl = new QLabel(tr("y:"), this);
   pl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-  layout->addWidget(pl, row, 3);
-  layout->addWidget(m_searchPosYSpinBox, row, 4);
+//  layout->addWidget(pl, row, 3);
+//  layout->addWidget(m_searchPosYSpinBox, row, 4);
+  searchLayout->addWidget(pl);
+  searchLayout->addWidget(m_searchPosYSpinBox);
   pl = new QLabel(tr("z:"), this);
   pl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-  layout->addWidget(pl, row, 5);
-  layout->addWidget(m_searchPosZSpinBox, row, 6);
-  row++;
+  searchLayout->addWidget(pl);
+  searchLayout->addWidget(m_searchPosZSpinBox);
+//  layout->addWidget(pl, row, 5);
+//  layout->addWidget(m_searchPosZSpinBox, row, 6);
+//  row++;
   pl = new QLabel(tr("in:"), this);
   pl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-  layout->addWidget(pl, row, 1);
-  layout->addWidget(m_searchFileEdit, row, 2, 1, 5);
-  layout->addWidget(m_selectSearchFileButton, row, 7);
+  searchLayout->addWidget(pl);
+  searchLayout->addWidget(m_searchFileEdit);
+  searchLayout->addWidget(m_selectSearchFileButton);
+
+  layout->addLayout(searchLayout, row, 1, 1, 7);
+
+
+//  layout->addWidget(pl, row, 7);
+//  layout->addWidget(m_searchFileEdit, row, 8);
+//  layout->addWidget(m_selectSearchFileButton, row, 9);
+
+
   m_searchFileEdit->setEnabled(false);
   m_selectSearchFileButton->setEnabled(false);
   m_searchPosXSpinBox->setEnabled(false);
@@ -257,16 +335,29 @@ void ZEditSwcDialog::createOperationGroupBox()
   m_rangeEndSpinBox = createIntSpinBox();
   layout->addWidget(m_typeCheckBox, row, 0);
   layout->addWidget(m_typeSpinBox, row, 2);
-  row++;
-  layout->addWidget(m_rangeCheckBox, row, 2);
+//  row++;
+
+  QHBoxLayout *rangeLayout = new QHBoxLayout;
+  rangeLayout->setContentsMargins(0, 0, 0, 0);
+  rangeLayout->addWidget(m_rangeCheckBox);
+//  layout->addWidget(m_rangeCheckBox, row, 4);
   pl = new QLabel(tr("start:"), this);
   pl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-  layout->addWidget(pl, row, 3);
-  layout->addWidget(m_rangeBeginSpinBox, row, 4);
+  rangeLayout->addWidget(pl);
+
+//  layout->addWidget(pl, row, 5);
+//  layout->addWidget(m_rangeBeginSpinBox, row, 6);
+  rangeLayout->addWidget(m_rangeBeginSpinBox);
   pl = new QLabel(tr("end:"), this);
   pl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-  layout->addWidget(pl, row, 5);
-  layout->addWidget(m_rangeEndSpinBox, row, 6);
+  rangeLayout->addWidget(pl);
+
+//  layout->addWidget(pl, row, 7);
+//  layout->addWidget(m_rangeEndSpinBox, row, 8);
+  rangeLayout->addWidget(m_rangeEndSpinBox);
+
+  layout->addLayout(rangeLayout, row, 4, 1, 3);
+
   m_typeSpinBox->setEnabled(false);
   m_rangeCheckBox->setEnabled(false);
   m_rangeBeginSpinBox->setEnabled(false);
@@ -298,7 +389,8 @@ void ZEditSwcDialog::createOperationGroupBox()
   row++;
 
   m_cleanSmallCheckBox = new QCheckBox(tr("clean small"), this);
-  connect(m_cleanSmallCheckBox, SIGNAL(stateChanged(int)), this, SLOT(cleanSmallCheckBoxChanged(int)));
+  connect(m_cleanSmallCheckBox, SIGNAL(stateChanged(int)),
+          this, SLOT(cleanSmallCheckBoxChanged(int)));
   layout->addWidget(m_cleanSmallCheckBox, row, 0);
   m_cleanSmallThresholdSpinBox = createDoubleSpinBox();
   layout->addWidget(new QLabel(tr("threshold:"), this), row, 1);
@@ -312,6 +404,19 @@ void ZEditSwcDialog::createOperationGroupBox()
   layout->addWidget(new QLabel(tr("threshold:"), this), row, 5);
   layout->addWidget(m_mergeThresholdSpinBox, row, 6);
   m_mergeThresholdSpinBox->setEnabled(false);
+  row++;
+
+  m_connectCheckBox = new QCheckBox(tr("connect"), this);
+  m_connectCheckBox->setToolTip("connect fragments");
+  connect(m_connectCheckBox, SIGNAL(stateChanged(int)),
+          this, SLOT(connectCheckBoxChanged(int)));
+  layout->addWidget(m_connectCheckBox, row, 0);
+  m_connectDistSpinBox = createDoubleSpinBox();
+  m_connectDistSpinBox->setValue(ZSwcConnector::DEFAULT_DIST_THRE);
+  m_connectDistSpinBox->setToolTip("maximal distance between two nodes that can be connected");
+  layout->addWidget(new QLabel(tr("max dist:"), this), row, 1);
+  layout->addWidget(m_connectDistSpinBox, row, 2);
+  m_connectDistSpinBox->setEnabled(false);
   row++;
 
   m_resizeCheckBox = new QCheckBox(tr("resize"), this);
@@ -464,6 +569,12 @@ void ZEditSwcDialog::createOperationGroupBox()
   m_featFileCheckBox = new QCheckBox(tr("get feature file"), this);
   connect(m_featFileCheckBox, SIGNAL(stateChanged(int)), this, SLOT(featFileCheckBoxChanged(int)));
   layout->addWidget(m_featFileCheckBox, row, 6);
+
+  //Hide some functions
+  m_infoCheckBox->setVisible(false);
+  m_infoComboBox->setVisible(false);
+  m_analysisCheckBox->setVisible(false);
+  m_featFileCheckBox->setVisible(false);
 
   m_operationGroupBox->setLayout(layout);
 }
@@ -739,6 +850,15 @@ void ZEditSwcDialog::cleanSmallCheckBoxChanged(int state)
   }
 }
 
+void ZEditSwcDialog::connectCheckBoxChanged(int state)
+{
+  if (state == Qt::Checked) {
+    m_connectDistSpinBox->setEnabled(true);
+  } else {
+    m_connectDistSpinBox->setEnabled(false);
+  }
+}
+
 void ZEditSwcDialog::resizeCheckBoxChanged(int state)
 {
   if (state == Qt::Checked) {
@@ -865,17 +985,32 @@ void ZEditSwcDialog::featFileCheckBoxChanged(int)
 
 }
 
-void ZEditSwcDialog::runOperations()
+void ZEditSwcDialog::runOperation(
+    const QString &inputFileName, const QString &outputFileName)
 {
-  QString inputFileName = m_inputFileEdit->text();
-  QString outputFileName = m_outputFileEdit->text();
+  dump("Input: " + inputFileName);
+  dump("Output: " + outputFileName);
+
+  bool usingOtherFile = true;
+  if (m_useCurrentSwcButton != NULL) {
+    usingOtherFile = m_useOtherFileButton->isChecked();
+  }
+
   if (m_swcTreeList.isEmpty()) {
-    if (m_useOtherFileButton->isChecked() && inputFileName.isEmpty()) {
+    if (usingOtherFile && inputFileName.isEmpty()) {
+      dumpWarning("Ignore empty input.");
       return;
     }
   } else if (inputFileName.isEmpty()) {
+    dumpWarning("Ignore empty input.");
     return;
   }
+
+  if (QFileInfo(outputFileName).exists()) {
+    dumpWarning("Ignore existing output target: " + outputFileName);
+    return;
+  }
+
   QByteArray bafilepath = inputFileName.toLocal8Bit();
   const char *filepath = bafilepath.data();
   QByteArray baoutfilepath = outputFileName.toLocal8Bit();
@@ -904,7 +1039,7 @@ void ZEditSwcDialog::runOperations()
   }
 
   Swc_Tree *tree;
-  if (!m_swcTreeList.isEmpty() && m_useCurrentSwcButton->isChecked()) {
+  if (!m_swcTreeList.isEmpty() && !usingOtherFile) {
     tree = m_swcTreeList.value(m_swcTreeList.size()-1)->cloneData();   //take last one as input
   } else {
     tree = Read_Swc_Tree(filepath);
@@ -968,10 +1103,13 @@ void ZEditSwcDialog::runOperations()
   if (m_searchCheckBox->isChecked()) {
     if (minindex == -1) {
       //printf("Search result: %s\n", qstringToChar(m_inputFileName));
-      QMessageBox::information(this, tr("search result"), QString("Search result: %1").arg(inputFileName));
+      QMessageBox::information(this, tr("search result"),
+                               QString("Search result: %1").arg(inputFileName));
     } else {
       //printf("Search result: %s\n", qstringToChar(m_subtractOtherSwcFileNames[minindex]));
-      QMessageBox::information(this, tr("search result"), QString("Search result: %1").arg(m_subtractOtherSwcFileNames[minindex]));
+      QMessageBox::information(
+            this, tr("search result"),
+            QString("Search result: %1").arg(m_subtractOtherSwcFileNames[minindex]));
     }
   }
 
@@ -1028,6 +1166,7 @@ void ZEditSwcDialog::runOperations()
 
   if (m_removeOvershootCheckBox->isChecked()) {
     Swc_Tree_Remove_Overshoot(tree);
+    node_changed = TRUE;
   }
 
   if (m_tuneForkCheckBox->isChecked()) {
@@ -1048,7 +1187,7 @@ void ZEditSwcDialog::runOperations()
 
       if ((begin == NULL) || (end == NULL)) {
         //fprintf(stderr, "Invalid selection ID.\n");
-        QMessageBox::warning(this, tr("Invalid selection"), tr("Invalid selection ID.\n"));
+        dumpWarning("Invalid selection ID");
         return;
       }
 
@@ -1121,9 +1260,17 @@ void ZEditSwcDialog::runOperations()
     }
     //printf("%d trees removed from %d trees.\n", n, total);
     //printf("%g\n", Swc_Tree_Overall_Length(tree));
-    QMessageBox::information(this, tr("result"),
-                             QString("%1 trees removed from %2 trees. \n %3\n").arg(n).arg(total).arg(Swc_Tree_Overall_Length(tree)));
+   dump(QString("%1 trees removed from %2 trees. \n %3\n").
+        arg(n).arg(total).arg(Swc_Tree_Overall_Length(tree)));
     node_changed = TRUE;
+  }
+
+  if (m_connectCheckBox->isChecked()) {
+    dump("Connecting fragments ...");
+    ZSwcConnector connector;
+    connector.setMinDist(m_connectDistSpinBox->value());
+    connector.useSurfaceDist(true);
+    node_changed = connector.connect(tree);
   }
 
   if (m_resizeCheckBox->isChecked()) {
@@ -1205,9 +1352,8 @@ void ZEditSwcDialog::runOperations()
     soma_tree = Copy_Swc_Tree(tree);
   }
 
-
-
   if (node_changed == TRUE) {
+    dump("Node ID changed. Resorting SWC node IDs ...");
     Swc_Tree_Resort_Id(tree);
   }
 
@@ -1254,6 +1400,7 @@ void ZEditSwcDialog::runOperations()
           }
         }
       }
+      //Output decomposition
     } else {
       if (outputFileName.endsWith(".dot")) {
         Swc_Tree_To_Dot_File(tree, outfilepath);
@@ -1321,11 +1468,11 @@ void ZEditSwcDialog::runOperations()
           } else {
             //fprintf(stderr, "Invalid color option: %s. "
             //        "Color coding is ignored.\n", qstringToChar(m_colorCodeMode));
-            QMessageBox::warning(this, tr("Invalid color option"),
-                                 QString("Invalid color option: %1. Color coding is ignored.\n").arg(m_colorCodeMode));
+            dumpWarning(QString("Invalid color option: %1. Color coding is ignored.\n").arg(m_colorCodeMode));
           }
         }
         Swc_Tree_To_Svg_File_W(tree, outfilepath, ws);
+        m_summary.append(QString("Saved: ") + outfilepath);
       } else {
         int napo = m_apoFileNames.size();
         if (napo > 0) {
@@ -1375,6 +1522,7 @@ void ZEditSwcDialog::runOperations()
         } else {
           Write_Swc_Tree(outfilepath, tree);
         }
+        m_summary.append(QString("Saved: ") + outfilepath);
       }
     }
   }
@@ -1400,7 +1548,9 @@ void ZEditSwcDialog::runOperations()
       //printf("Surface area: %g\n", Swc_Tree_Surface_Area(tree));
       infostr.append(QString("Surface area: %1\n").arg(Swc_Tree_Surface_Area(tree)));
     }
-    QMessageBox::information(this, tr("info"), infostr);
+    m_summary.append(QString("Infomation for ") + filepath);
+    m_summary.append(infostr);
+//    QMessageBox::information(this, tr("info"), infostr);
   }
 
   if (m_analysisCheckBox->isChecked()) {
@@ -1423,9 +1573,48 @@ void ZEditSwcDialog::runOperations()
 //    }
     if (!outputFileName.isEmpty()) {
       Swc_Tree_To_Branch_Feature_File(tree, outfilepath);
+      m_summary.append(QString("Saved: ") + outfilepath);
+    }
+  }
+}
+
+void ZEditSwcDialog::runOperations()
+{
+  QString input = m_inputFileEdit->text();
+  QString output = m_outputFileEdit->text();
+
+  QFileInfo fileInfo(input);
+  QDir dir = fileInfo.absoluteDir();
+
+  QStringList filters;
+  filters << fileInfo.fileName();
+
+  QStringList fileList = dir.entryList(filters);
+
+  QFileInfo outFileInfo(output);
+
+  QString outputFileName;
+  QDir outDir;
+
+  if (outFileInfo.isDir()) {
+    outDir = outFileInfo.absoluteFilePath();
+  } else {
+    outputFileName = outFileInfo.absoluteFilePath();
+  }
+
+
+  clearMessage();
+  dump("Start processing ...");
+
+  foreach (const QString &fileName, fileList) {
+    if (outFileInfo.isDir()) {
+      outputFileName = outDir.absoluteFilePath(fileName);
     }
 
+    qDebug() << dir.absoluteFilePath(fileName);
+    runOperation(dir.absoluteFilePath(fileName), outputFileName);
   }
-  return;
+  dump("Done!");
 
+  dump(m_summary);
 }

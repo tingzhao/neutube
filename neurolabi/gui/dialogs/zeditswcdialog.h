@@ -16,8 +16,11 @@ class QLabel;
 class QLineEdit;
 class QRadioButton;
 class QComboBox;
+class QTextEdit;
 QT_END_NAMESPACE
+
 class ZSwcTree;
+class ZWidgetMessage;
 
 class ZEditSwcDialog : public QDialog
 {
@@ -56,6 +59,7 @@ private slots:
   void rangeCheckBoxChanged(int state);
   void translateCheckBoxChanged(int state);
   void cleanSmallCheckBoxChanged(int state);
+  void connectCheckBoxChanged(int state);
   void resizeCheckBoxChanged(int state);
   void mergeCheckBoxChanged(int state);
   void singleCheckBoxChanged(int state);
@@ -81,6 +85,13 @@ private:
   void createLabels();
   QDoubleSpinBox* createDoubleSpinBox();
   QSpinBox* createIntSpinBox();
+  void runOperation(const QString &inputFileName, const QString &outputFileName);
+
+  void clearMessage();
+  void dump(const QString &msg);
+  void dump(const ZWidgetMessage &msg);
+  void dump(const QStringList &msg);
+  void dumpWarning(const QString &msg);
 
   void _init();
 
@@ -115,6 +126,7 @@ private:
   QDoubleSpinBox *m_cleanSmallThresholdSpinBox;
   QDoubleSpinBox *m_mergeThresholdSpinBox;
   QDoubleSpinBox *m_signalMarginSpinBox;
+  QDoubleSpinBox *m_connectDistSpinBox;
   QSpinBox *m_typeSpinBox;
   QSpinBox *m_rangeBeginSpinBox;
   QSpinBox *m_rangeEndSpinBox;
@@ -160,6 +172,7 @@ private:
   QCheckBox *m_rangeCheckBox;
   QCheckBox *m_translateCheckBox;
   QCheckBox *m_cleanSmallCheckBox;
+  QCheckBox *m_connectCheckBox;
   QCheckBox *m_resizeCheckBox;
   QCheckBox *m_mergeCheckBox;
   QCheckBox *m_singleCheckBox;
@@ -178,8 +191,11 @@ private:
   QCheckBox *m_analysisCheckBox;
   QCheckBox *m_featFileCheckBox;
 
+  QTextEdit *m_messageWidget;
+
   QList<ZSwcTree*> m_swcTreeList;
 
+  QStringList m_summary;
 };
 
 #endif // ZEDITSWCDIALOG_H

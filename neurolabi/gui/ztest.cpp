@@ -268,6 +268,7 @@ using namespace std;
 #include "flyem/zflyemorthomvc.h"
 #include "flyem/zflyemorthodoc.h"
 #include "flyem/zflyemorthowindow.h"
+#include "zswcconnector.h"
 
 using namespace std;
 
@@ -19772,9 +19773,44 @@ void ZTest::test(MainWindow *host)
   stack.save(GET_TEST_DATA_DIR + "/test.tif");
 #endif
 
-#if 1
+#if 0
   ZNeuronTracer tracer;
   tracer.test();
+#endif
+
+#if 0
+  QString filePath((GET_TEST_DATA_DIR + "/cone").c_str());
+
+  QFileInfo fileInfo(filePath);
+  QDir dir = fileInfo.absoluteDir();
+
+  qDebug() << "Is directory:" << fileInfo.isDir();
+
+  QStringList filters;
+  filters << fileInfo.fileName();
+
+//  QDir dir;
+  QStringList dirs = dir.entryList(filters);
+
+  foreach (const QString &fileName, dirs) {
+    qDebug() << dir.absoluteFilePath(fileName);
+  }
+
+  QFileInfo dirInfo(GET_TEST_DATA_DIR.c_str());
+  qDebug() << dirInfo.isDir();
+  qDebug() << dirInfo.absoluteFilePath();
+#endif
+
+#if 1
+  ZSwcTree tree;
+  tree.load(GET_TEST_DATA_DIR + "/_benchmark/swc/multi_tree2.swc");
+
+  ZSwcConnector connector;
+  connector.useSurfaceDist(true);
+  connector.connect(tree.data());
+
+  tree.save(GET_TEST_DATA_DIR + "/test.swc");
+
 #endif
 
   std::cout << "Done." << std::endl;
