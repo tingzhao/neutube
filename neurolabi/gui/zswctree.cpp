@@ -949,9 +949,28 @@ int ZSwcTree::updateIterator(int option, Swc_Tree_Node *start,
   return count;
 }
 
+bool ZSwcTree::isIdConsistent() const
+{
+  bool isConsistent = true;
+
+  updateIterator(2);
+  for (Swc_Tree_Node *tn = begin(); tn != end(); tn = next()) {
+    if (Swc_Tree_Node_Is_Regular(tn)) {
+      if (!SwcTreeNode::isParentIdConsistent(tn)) {
+        isConsistent = false;
+        break;
+      }
+    }
+  }
+
+  return isConsistent;
+}
+
 int ZSwcTree::swcFprint(FILE *fp, int start_id, int parent_id, double z_scale)
 {
-  resortId();
+  if (!isIdConsistent()) {
+    resortId();
+  }
 
   updateIterator(2);
 

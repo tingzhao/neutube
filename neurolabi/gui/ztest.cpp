@@ -19801,7 +19801,7 @@ void ZTest::test(MainWindow *host)
   qDebug() << dirInfo.absoluteFilePath();
 #endif
 
-#if 1
+#if 0
   ZSwcTree tree;
   tree.load(GET_TEST_DATA_DIR + "/_benchmark/swc/multi_tree2.swc");
 
@@ -19811,6 +19811,25 @@ void ZTest::test(MainWindow *host)
 
   tree.save(GET_TEST_DATA_DIR + "/test.swc");
 
+#endif
+
+#if 1
+  Stack *stack = C_Stack::readSc(
+        GET_TEST_DATA_DIR + "/benchmark/binary/2d/ring_n10.tif");
+  ZObject3dScan obj;
+
+  obj.loadStack(stack);
+
+//  obj.save(GET_TEST_DATA_DIR + "/test.sobj");
+
+  ASSERT_TRUE(obj.isCanonized());
+
+  std::vector<ZObject3dScan> objArray =
+      obj.getConnectedComponent(ZObject3dScan::ACTION_NONE);
+  objArray[0].print();
+  std::cout << objArray[0].getVoxelNumber() << std::endl;
+  objArray[0].save(GET_TEST_DATA_DIR + "/test.sobj");
+//  sizeArray = obj.getConnectedObjectSize();
 #endif
 
   std::cout << "Done." << std::endl;

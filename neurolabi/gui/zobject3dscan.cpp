@@ -817,7 +817,7 @@ void ZObject3dScan::canonize()
   if (!isEmpty() && !isCanonized()) {
     sort();
 
-    std::cout << "Sorting done in canozing" << std::endl;
+//    std::cout << "Sorting done in canozing" << std::endl;
 
 #ifdef _DEBUG_2
   int count = 0;
@@ -851,8 +851,9 @@ void ZObject3dScan::canonize()
     }
 
     newStripeArray.resize(length);
+#ifdef _DEBUG_2
     std::cout << length << " stripes finalized." << std::endl;
-
+#endif
     //m_stripeArray = newStripeArray;
     m_stripeArray.swap(newStripeArray);
 
@@ -1245,7 +1246,7 @@ ZGraph* ZObject3dScan::buildConnectionGraph()
 
   ZGraph *graph = new ZGraph(ZGraph::UNDIRECTED_WITHOUT_WEIGHT);
 
-#ifdef _DEBUG_
+#ifdef _DEBUG_2
   std::cout << "Canonizing ..." << std::endl;
 #endif
 
@@ -1414,14 +1415,20 @@ std::vector<ZObject3dScan> ZObject3dScan::getConnectedComponent(
         int v1 = (*iter)->edgeStart(edgeIndex);
         int v2 = (*iter)->edgeEnd(edgeIndex);
         int z, y, x1, x2;
-        getSegment(v1, &z, &y, &x1, &x2);
-        subobj.addSegment(z, y, x1, x2, false);
-        getSegment(v2, &z, &y, &x1, &x2);
-        subobj.addSegment(z, y, x1, x2, false);
-        isAdded[v1] = true;
-        isAdded[v2] = true;
+
+        if (!isAdded[v1]) {
+          getSegment(v1, &z, &y, &x1, &x2);
+          subobj.addSegment(z, y, x1, x2, false);
+          isAdded[v1] = true;
+        }
+
+        if (!isAdded[v2]) {
+          getSegment(v2, &z, &y, &x1, &x2);
+          subobj.addSegment(z, y, x1, x2, false);
+          isAdded[v2] = true;
+        }
       }
-#if 1
+#if _DEBUG_2
       std::cout << "  Edge processing done." << std::endl;
 #endif
       switch (ppAction) {
@@ -1445,13 +1452,13 @@ std::vector<ZObject3dScan> ZObject3dScan::getConnectedComponent(
       objArray.push_back(subobj);
     }
 
-#if 1
+#if _DEBUG_2
     std::cout << objArray.size() << " components extracted." << std::endl;
 #endif
 
     delete graph;
 
-#if 1
+#if _DEBUG_2
     std::cout << "Checking remains ..." << std::endl;
 #endif
     for (size_t i = 0; i < isAdded.size(); ++i) {
@@ -1464,7 +1471,7 @@ std::vector<ZObject3dScan> ZObject3dScan::getConnectedComponent(
       }
     }
 
-#if 1
+#if _DEBUG_2
     std::cout << objArray.size() << " components extracted." << std::endl;
 #endif
   }

@@ -598,6 +598,18 @@ TEST(SwcTree, ExtIterator)
   }
 }
 
+TEST(SwcTree, ID)
+{
+  {
+    ZSwcTree tree;
+    tree.load(GET_TEST_DATA_DIR + "/benchmark/swc/depth_first.swc");
+    ASSERT_TRUE(tree.isIdConsistent());
+
+    tree.forceVirtualRoot();
+    ASSERT_TRUE(tree.isIdConsistent());
+  }
+}
+
 #endif
 
 #endif // ZSWCTREETEST_H

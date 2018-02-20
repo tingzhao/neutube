@@ -233,6 +233,11 @@ public:
    */
   void loadFromBuffer(const char *buffer);
 
+  /*!
+   * \brief Check if the IDs of the nodes are consistent.
+   */
+  bool isIdConsistent() const;
+
   virtual int swcFprint(FILE *fp, int start_id = 0, int parent_id = -1,
                         double z_scale = 1.0);
   virtual void swcExport(const char *filePath);
