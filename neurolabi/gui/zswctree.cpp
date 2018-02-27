@@ -202,8 +202,6 @@ void ZSwcTree::save(const char *filePath)
 #endif
 
   if (!isEmpty()) {
-    resortId();
-
     FILE *fp = fopen(filePath, "w");
 
     if (fp == NULL) {
@@ -218,14 +216,21 @@ void ZSwcTree::save(const char *filePath)
       fprintf(fp, "# %s\n", (*iter).c_str());
     }
 
-    ZSwcTree::DepthFirstIterator iter(this);
-//    iter.begin();
-    while (iter.hasNext()) {
-      Swc_Tree_Node *tn = iter.next();
-      if (SwcTreeNode::isRegular(tn)) {
-        fprintf(fp, "%d %d %g %g %g %g %d\n",
-                tn->node.id, tn->node.type, tn->node.x, tn->node.y,
-                tn->node.z, tn->node.d, tn->node.parent_id);
+    if (!isIdConsistent()) {
+      resortId();
+      ZSwcTree::DepthFirstIterator iter(this);
+  //    iter.begin();
+      while (iter.hasNext()) {
+        Swc_Tree_Node *tn = iter.next();
+        SwcTreeNode::fprint(tn, fp);
+      }
+    } else {
+      const std::vector<Swc_Tree_Node*> &depthFirstArray =
+          getSwcTreeNodeArray(ID_SORT_ITERATOR);
+      for (std::vector<Swc_Tree_Node*>::const_iterator iter = depthFirstArray.begin();
+           iter != depthFirstArray.end(); ++iter) {
+        const Swc_Tree_Node *tn = *iter;
+        SwcTreeNode::fprint(tn, fp);
       }
     }
 
@@ -968,9 +973,7 @@ bool ZSwcTree::isIdConsistent() const
 
 int ZSwcTree::swcFprint(FILE *fp, int start_id, int parent_id, double z_scale)
 {
-  if (!isIdConsistent()) {
-    resortId();
-  }
+  resortId();
 
   updateIterator(2);
 
@@ -3003,6 +3006,8 @@ bool ZSwcTree::isDeprecated(EComponent component) const
     return m_branchPointArray.empty();
   case Z_SORTED_ARRAY:
     return m_zSortedArray.empty();
+  case ID_SORTED_ARRAY:
+    return m_idSortedArray.empty();
   case BOUND_BOX:
 #ifdef _DEBUG_2
     std::cout << "isDeprecated: " << m_boundBox.isValid() << std::endl;
@@ -3023,6 +3028,7 @@ void ZSwcTree::deprecateDependent(EComponent component)
     deprecate(BRANCH_POINT_ARRAY);
     deprecate(TERMINAL_ARRAY);
     deprecate(Z_SORTED_ARRAY);
+    deprecate(ID_SORTED_ARRAY);
     break;
   case BREADTH_FIRST_ARRAY:
     break;
@@ -3053,6 +3059,9 @@ void ZSwcTree::deprecate(EComponent component)
     break;
   case Z_SORTED_ARRAY:
     m_zSortedArray.clear();
+    break;
+  case ID_SORTED_ARRAY:
+    m_idSortedArray.clear();;
     break;
   case BOUND_BOX:
     m_boundBox.invalidate();
@@ -3154,6 +3163,29 @@ const std::vector<Swc_Tree_Node *> &ZSwcTree::getSwcTreeNodeArray(
     }
 
     return m_zSortedArray;
+  case ID_SORT_ITERATOR:
+    if (isDeprecated(ID_SORTED_ARRAY)) {
+      const vector<Swc_Tree_Node*> &depthFirstArray =
+          getSwcTreeNodeArray(DEPTH_FIRST_ITERATOR);
+
+      vector<Swc_Tree_Node*>::const_iterator firstIter = depthFirstArray.begin();
+
+      if (SwcTreeNode::isVirtual(*firstIter)) {
+        ++firstIter;
+      }
+
+      if (firstIter != depthFirstArray.end()) {
+        m_idSortedArray.clear();
+        m_idSortedArray.insert(m_idSortedArray.begin(),
+                              firstIter, depthFirstArray.end());
+
+        //sort by id
+        sort(m_idSortedArray.begin(), m_idSortedArray.end(), SwcTreeNode::lessThanId);
+      }
+    }
+
+    return m_idSortedArray;
+    break;
   default:
     return getSwcTreeNodeArray(DEPTH_FIRST_ITERATOR);
   }

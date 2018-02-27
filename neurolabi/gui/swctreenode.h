@@ -633,6 +633,7 @@ int compareZ(const Swc_Tree_Node *tn1, const Swc_Tree_Node *tn2);
 //Always returns false for two virtual nodes
 bool lessThanZ(const Swc_Tree_Node *tn1, const Swc_Tree_Node *tn2);
 
+bool lessThanId(const Swc_Tree_Node *tn1, const Swc_Tree_Node *tn2);
 
 bool lessThanWeight(const Swc_Tree_Node *tn1, const Swc_Tree_Node *tn2);
 bool biggerThanWeight(const Swc_Tree_Node *tn1, const Swc_Tree_Node *tn2);
@@ -669,6 +670,13 @@ std::map<Swc_Tree_Node*, Swc_Tree_Node*> crossoverMatch(
 
 //I/O
 void dump(const Swc_Tree_Node *tn, std::ostream &stream);
+
+/*!
+ * \brief Print a node into a file as the SWC format
+ *
+ * \tn will be ignored if it is a non-regular node. \a fp is supposed to be valid.
+ */
+void fprint(const Swc_Tree_Node *tn, FILE *fp);
 
 static const double MinimalRadius = 0.1;
 }

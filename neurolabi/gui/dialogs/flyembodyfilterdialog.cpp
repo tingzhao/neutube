@@ -66,6 +66,7 @@ bool FlyEmBodyFilterDialog::hasUpperBodySize() const
 std::vector<int> FlyEmBodyFilterDialog::getExcludedBodies() const
 {
   ZString str =  ui->excludedBodyLineEdit->text().toStdString();
+
   return str.toIntegerArray();
 }
 

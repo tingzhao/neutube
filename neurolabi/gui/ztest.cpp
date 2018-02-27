@@ -19813,7 +19813,7 @@ void ZTest::test(MainWindow *host)
 
 #endif
 
-#if 1
+#if 0
   Stack *stack = C_Stack::readSc(
         GET_TEST_DATA_DIR + "/benchmark/binary/2d/ring_n10.tif");
   ZObject3dScan obj;
@@ -19830,6 +19830,17 @@ void ZTest::test(MainWindow *host)
   std::cout << objArray[0].getVoxelNumber() << std::endl;
   objArray[0].save(GET_TEST_DATA_DIR + "/test.sobj");
 //  sizeArray = obj.getConnectedObjectSize();
+#endif
+
+#if 0
+  ZSwcTree tree;
+  tree.load(GET_TEST_DATA_DIR + "/benchmark/swc/depth_first.swc");
+
+//  SwcTreeNode::setId(tree.root()->first_child, 5);
+
+  std::cout << "Consistency: " << tree.isIdConsistent() << std::endl;
+
+  tree.save(GET_TEST_DATA_DIR + "/test.swc");
 #endif
 
   std::cout << "Done." << std::endl;

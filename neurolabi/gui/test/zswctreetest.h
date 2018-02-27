@@ -607,6 +607,10 @@ TEST(SwcTree, ID)
 
     tree.forceVirtualRoot();
     ASSERT_TRUE(tree.isIdConsistent());
+
+    Swc_Tree_Node *tn = tree.root();
+    SwcTreeNode::setId(tn, 2);
+    ASSERT_FALSE(tree.isIdConsistent());
   }
 }
 

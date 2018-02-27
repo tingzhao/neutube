@@ -1345,6 +1345,12 @@ bool SwcTreeNode::lessThanZ(const Swc_Tree_Node *tn1, const Swc_Tree_Node *tn2)
   return (z(tn1) < z(tn2));
 }
 
+
+bool SwcTreeNode::lessThanId(const Swc_Tree_Node *tn1, const Swc_Tree_Node *tn2)
+{
+  return (id(tn1) < id(tn2));
+}
+
 bool SwcTreeNode::lessThanWeight(const Swc_Tree_Node *tn1, const Swc_Tree_Node *tn2)
 {
   return (weight(tn1) < weight(tn2));
@@ -1732,6 +1738,15 @@ void SwcTreeNode::dump(const Swc_Tree_Node *tn, ostream &stream)
 
     stream << id(tn) << " " << type(tn) << " " << x(tn) << " " << y(tn) << " "
            << z(tn) << " " << radius(tn) << " " << parentId(tn) << std::endl;
+  }
+}
+
+void SwcTreeNode::fprint(const Swc_Tree_Node *tn, FILE *fp)
+{
+  if (SwcTreeNode::isRegular(tn)) {
+    fprintf(fp, "%d %d %g %g %g %g %d\n",
+            tn->node.id, tn->node.type, tn->node.x, tn->node.y,
+            tn->node.z, tn->node.d, tn->node.parent_id);
   }
 }
 

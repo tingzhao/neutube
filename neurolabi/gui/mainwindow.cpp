@@ -1495,27 +1495,27 @@ void MainWindow::initProgress(int maxValue)
 
 void MainWindow::advanceProgress(double dp)
 {
-  if (m_progress->value() < m_progress->maximum()) {
-    int range = m_progress->maximum() - m_progress->minimum();
-    m_progress->setValue(m_progress->value() + iround(dp * range));
+  if (getProgressDialog()->value() < getProgressDialog()->maximum()) {
+    int range = getProgressDialog()->maximum() - getProgressDialog()->minimum();
+    getProgressDialog()->setValue(getProgressDialog()->value() + iround(dp * range));
   }
 }
 
 void MainWindow::startProgress(const QString &title, int nticks)
 {
   initProgress(nticks);
-  m_progress->setLabelText(title);
-  m_progress->show();
+  getProgressDialog()->setLabelText(title);
+  getProgressDialog()->show();
 }
 
 void MainWindow::startProgress()
 {
-  m_progress->show();
+  getProgressDialog()->show();
 }
 
 void MainWindow::endProgress()
 {
-  m_progress->reset();
+  getProgressDialog()->reset();
 }
 
 void MainWindow::openFileListFunc(const QStringList fileList)
@@ -1619,11 +1619,11 @@ void MainWindow::openFile(const QStringList &fileNameList)
 
 void MainWindow::openFile(const QString &fileName)
 {
-  m_progress->setRange(0, 5);
-  m_progress->setLabelText(QString("Loading %1 ...").arg(fileName));
+  getProgressDialog()->setRange(0, 5);
+  getProgressDialog()->setLabelText(QString("Loading %1 ...").arg(fileName));
   int currentProgress = 0;
-  m_progress->setValue(++currentProgress);
-  m_progress->show();
+  getProgressDialog()->setValue(++currentProgress);
+  getProgressDialog()->show();
 
   //QFuture<ZStackDocReader*> res =
   QtConcurrent::run(this, &MainWindow::openFileFunc2, fileName);
@@ -2020,13 +2020,13 @@ void MainWindow::importImageSequence()
 
     //ZStackFrame *frame = new ZStackFrame;
 
-    m_progress->open();
-    m_progress->setRange(0, 2);
-    m_progress->setLabelText(
+    getProgressDialog()->open();
+    getProgressDialog()->setRange(0, 2);
+    getProgressDialog()->setLabelText(
           QString("Loading image sequence: " + fileName + " ..."));
-    m_progress->show();
+    getProgressDialog()->show();
     int currentProgress = 0;
-    m_progress->setValue(++currentProgress);
+    getProgressDialog()->setValue(++currentProgress);
 
     qApp->processEvents();
     //m_progress->repaint();
@@ -2039,8 +2039,8 @@ void MainWindow::importImageSequence()
       delete frame;
     }
 
-    m_progress->setValue(++currentProgress);
-    m_progress->reset();
+    getProgressDialog()->setValue(++currentProgress);
+    getProgressDialog()->reset();
   }
   //QApplication::processEvents();
 }
@@ -2399,9 +2399,9 @@ void MainWindow::enhanceLine()
 {
   ZStackFrame *frame = currentStackFrame();
   if (frame != NULL) {
-    m_progress->setRange(0, 0);
-    m_progress->setLabelText(tr("Enhance line structure ..."));
-    m_progress->show();
+    getProgressDialog()->setRange(0, 0);
+    getProgressDialog()->setLabelText(tr("Enhance line structure ..."));
+    getProgressDialog()->show();
 
     frame->pushEnhanceLineCommand();
 
@@ -2411,7 +2411,7 @@ void MainWindow::enhanceLine()
     currentStackFrame()->pushUndoCommand(cmd);
     */
     //currentStackFrame()->document()->enhanceLine();
-    m_progress->reset();
+    getProgressDialog()->reset();
     //currentStackFrame()->updateView();
   }
 }
@@ -2621,7 +2621,7 @@ void MainWindow::autoTrace(ZStackFrame *frame)
   frame->document()->setProgressReporter(&reporter);
 
   frame->executeAutoTraceCommand(m_autoTraceDlg->getTraceLevel(),
-                                 m_autoTraceDlg->getDoResample(),
+                                 m_autoTraceDlg->resampling(),
                                  m_autoTraceDlg->getChannel());
 
   frame->document()->setProgressReporter(oldReporter);
@@ -2653,13 +2653,13 @@ void MainWindow::on_actionAutomatic_triggered()
     }
 
     int channelNumber = frame->document()->getStack()->channelNumber();
-    m_autoTraceDlg->setChannelNumber(channelNumber);
+    m_autoTraceDlg->setChannelCount(channelNumber);
 
     if (m_autoTraceDlg->exec()) {
-      m_progress->setRange(0, 100);
-      m_progress->setValue(1);
-      m_progress->setLabelText("Tracing");
-      m_progress->show();
+      getProgressDialog()->setRange(0, 100);
+      getProgressDialog()->setValue(1);
+      getProgressDialog()->setLabelText("Tracing");
+      getProgressDialog()->show();
       //    frame->document()->setTraceLevel(dlg.getTraceLevel());
 
       QtConcurrent::run(this, &MainWindow::autoTrace, frame);
@@ -2771,6 +2771,11 @@ void MainWindow::dropEvent(QDropEvent *event)
   m_lastOpenedFilePath = fileList.back();
 }
 
+void MainWindow::on_actionLoad_triggered()
+{
+  //Outdated function
+}
+
 void MainWindow::on_actionSave_triggered()
 {
   ZStackFrame *frame = currentStackFrame();
@@ -2802,60 +2807,6 @@ void MainWindow::on_actionSave_triggered()
     }
   }
 }
-
-void MainWindow::on_actionLoad_triggered()
-{
-#if 0
-  QString dirpath =/*
-      QFileDialog::getExistingDirectory(this, tr("Tracing Project"),
-                                        ".", QFileDialog::ShowDirsOnly);*/
-#if defined __APPLE__
-      getOpenFileName("Tracing Project", "Tracing project (*.trace)");
-#else
-      getOpenFileName("Tracing Project", "Tracing project (*.xml)");
-#if 0
-      QFileDialog::getOpenFileName(this, tr("Tracing Project"), m_lastOpenedFilePath,
-                               "Tracing project (*.xml)");
-#endif
-#endif
-
-  if (!dirpath.isEmpty()) {
-    m_lastOpenedFilePath = dirpath;
-    QString projectFile = dirpath;
-#if defined __APPLE__
-    projectFile += "/" + ZStackFrame::defaultTraceProjectFile();
-#endif
-    if (QFile(projectFile).exists()) {
-      m_progress->setRange(0, 100);
-      m_progress->setLabelText(QString("Loading " + dirpath + " ..."));
-      m_progress->show();
-
-      m_progress->setValue(25);
-      ZStackFrame *frame = new ZStackFrame;
-
-      qDebug() << projectFile;
-
-      if (frame->loadTraceProject(projectFile.toLocal8Bit().constData(),
-                                  m_progress->findChild<QProgressBar*>())
-        == 0) {
-        setCurrentFile(dirpath);
-        addStackFrame(frame);
-        m_progress->reset();
-      } else {
-        report("Open Failed", "The file cannot be open.",
-               NeuTube::MSG_WARNING);
-        /*
-        QMessageBox::warning(this, tr("Open Failed"),
-                             tr("The file cannot be open."), QMessageBox::Ok);
-*/
-        delete frame;
-        m_progress->reset();
-      }
-    }
-  }
-#endif
-}
-
 
 void MainWindow::on_actionAdd_Reference_triggered()
 {
@@ -2942,18 +2893,18 @@ void MainWindow::on_actionExtract_Channel_triggered()
   if (frame != NULL) {
     ChannelDialog dlg(NULL, frame->document()->getStack()->channelNumber());
     if (dlg.exec() == QDialog::Accepted) {
-      m_progress->setRange(0, 100);
-      m_progress->setLabelText(QString("Extracing channel ..."));
-      m_progress->show();
+      getProgressDialog()->setRange(0, 100);
+      getProgressDialog()->setLabelText(QString("Extracing channel ..."));
+      getProgressDialog()->show();
 
-      m_progress->setValue(25);
+      getProgressDialog()->setValue(25);
 
       int channel = dlg.channel();
       Stack *stack = frame->document()->getStack()->copyChannel(channel);
       if (stack != NULL) {
-        m_progress->setRange(0, 100);
-        m_progress->setLabelText(QString("Extracting Channel %1 ...").arg(channel));
-        m_progress->show();
+        getProgressDialog()->setRange(0, 100);
+        getProgressDialog()->setLabelText(QString("Extracting Channel %1 ...").arg(channel));
+        getProgressDialog()->show();
         //ZStackFrame *nframe = new ZStackFrame;
         ZStackFrame *nframe = ZStackFrame::Make(NULL);
         nframe->loadStack(stack, true);
@@ -2966,7 +2917,7 @@ void MainWindow::on_actionExtract_Channel_triggered()
         presentStackFrame(nframe);
       }
 
-      m_progress->reset();
+      getProgressDialog()->reset();
     }
   }
 }
@@ -3478,16 +3429,16 @@ void MainWindow::test()
 #endif
 
 #if 1
-  m_progress->setRange(0, 2);
-  m_progress->setLabelText(QString("Testing ..."));
+  getProgressDialog()->setRange(0, 2);
+  getProgressDialog()->setLabelText(QString("Testing ..."));
   int currentProgress = 0;
-  m_progress->setValue(++currentProgress);
-  m_progress->show();
+  getProgressDialog()->setValue(++currentProgress);
+  getProgressDialog()->show();
 
   //res.waitForFinished();
   ZTest::test(this);
 
-  m_progress->reset();
+  getProgressDialog()->reset();
 
   statusBar()->showMessage(tr("Test done."));
 #endif
@@ -3631,10 +3582,10 @@ void MainWindow::on_actionAddFlyEmNeuron_Network_triggered()
   if (!fileName.isEmpty()) {
     m_lastOpenedFilePath = fileName;
 
-    m_progress->setRange(0, 2);
-    m_progress->setLabelText(QString("Loading neuron network: " + fileName + " ..."));
+    getProgressDialog()->setRange(0, 2);
+    getProgressDialog()->setLabelText(QString("Loading neuron network: " + fileName + " ..."));
     int currentProgress = 0;
-    m_progress->setValue(++currentProgress);
+    getProgressDialog()->setValue(++currentProgress);
     qApp->processEvents();
 
     //ZStackFrame *frame = new ZStackFrame;
@@ -3643,8 +3594,8 @@ void MainWindow::on_actionAddFlyEmNeuron_Network_triggered()
     ZStackDoc *doc = new ZStackDoc(NULL);
     doc->loadSwcNetwork(fileName);
 
-    m_progress->setValue(++currentProgress);
-    m_progress->reset();
+    getProgressDialog()->setValue(++currentProgress);
+    getProgressDialog()->reset();
 
     ZWindowFactory factory;
     factory.setParentWidget(this);
@@ -4380,13 +4331,13 @@ void MainWindow::on_actionImportFlyEmDatabase_triggered()
                                      tr("Json files (*.json)"));
 
   if (!fileName.isEmpty()) {
-    m_progress->setRange(0, 3);
+    getProgressDialog()->setRange(0, 3);
 
     int currentProgress = 0;
-    m_progress->open();
-    m_progress->setLabelText(QString("Loading " + fileName + " ..."));
+    getProgressDialog()->open();
+    getProgressDialog()->setLabelText(QString("Loading " + fileName + " ..."));
 
-    m_progress->setValue(++currentProgress);
+    getProgressDialog()->setValue(++currentProgress);
 
     ZFlyEmDataFrame *frame = new ZFlyEmDataFrame;
     if (frame->load(fileName.toStdString())) {
@@ -4395,7 +4346,7 @@ void MainWindow::on_actionImportFlyEmDatabase_triggered()
       delete frame;
       reportFileOpenProblem(fileName);
     }
-    m_progress->reset();
+    getProgressDialog()->reset();
   }
 }
 
@@ -4496,8 +4447,8 @@ void MainWindow::on_actionMake_Movie_triggered()
                                               */
 
         if (!saveFileDir.isEmpty()) {
-          m_progress->setRange(0, 3);
-          m_progress->show();
+          getProgressDialog()->setRange(0, 3);
+          getProgressDialog()->show();
 
           std::string outDir = saveFileDir.toStdString();
 
@@ -4507,11 +4458,11 @@ void MainWindow::on_actionMake_Movie_triggered()
           director.setScript(script);
           director.setFrameInterval(1000 / m_movieDlg->getFrameRate());
 
-          m_progress->setValue(1);
+          getProgressDialog()->setValue(1);
 
           director.make(outDir);
 
-          m_progress->reset();
+          getProgressDialog()->reset();
         }
       }
     }
@@ -6125,11 +6076,11 @@ void MainWindow::on_actionHot_Spot_Demo_triggered()
     }
 #endif
 
-    m_progress->setRange(0, 2);
-    m_progress->setLabelText(QString("Testing ..."));
+    getProgressDialog()->setRange(0, 2);
+    getProgressDialog()->setLabelText(QString("Testing ..."));
     int currentProgress = 0;
-    m_progress->setValue(++currentProgress);
-    m_progress->show();
+    getProgressDialog()->setValue(++currentProgress);
+    getProgressDialog()->show();
 
     res.waitForFinished();
 
@@ -6166,7 +6117,7 @@ void MainWindow::on_actionHot_Spot_Demo_triggered()
     }
 #endif
 
-    m_progress->reset();
+    getProgressDialog()->reset();
 
 #if 0
 
@@ -6433,8 +6384,8 @@ void MainWindow::runBodySplit()
     ZStackFrame *frame = currentStackFrame();
     if (frame != NULL) {
       initProgress(0);
-      m_progress->setLabelText("Splitting ...");
-      m_progress->open();
+      getProgressDialog()->setLabelText("Splitting ...");
+      getProgressDialog()->open();
 
 #if defined(_NEUTUBE_MAC_)
       runSplitFunc(frame); //Avoid potential bug in QtConcurrent
@@ -6816,9 +6767,9 @@ void MainWindow::on_actionUpdate_Skeletons_triggered()
   if (m_dvidSkeletonizeDialog->exec()) {
     ZDvidReader reader;
 
-    m_progress->setLabelText("Skeletonizing ...");
-    m_progress->setRange(0, 0);
-    m_progress->open();
+    getProgressDialog()->setLabelText("Skeletonizing ...");
+    getProgressDialog()->setRange(0, 0);
+    getProgressDialog()->open();
 
     if (reader.open(m_dvidSkeletonizeDialog->getDvidTarget())) {
       ZDvidWriter writer;
@@ -6862,8 +6813,8 @@ void MainWindow::on_actionUpdate_Skeletons_triggered()
       }
     }
 
-    m_progress->reset();
-    m_progress->hide();
+    getProgressDialog()->reset();
+    getProgressDialog()->hide();
   }
 }
 
@@ -7258,8 +7209,8 @@ void MainWindow::on_actionLoad_Named_Bodies_triggered()
   filter.setMinBodySize(1000000);
   filter.setUpperBodySizeEnabled(false);
 
-  m_progress->setRange(0, 100);
-  m_progress->setLabelText(QString("Loading ") +
+  getProgressDialog()->setRange(0, 100);
+  getProgressDialog()->setLabelText(QString("Loading ") +
                            target.getSourceString().c_str() + "...");
 
   m_flyemDataLoader->loadDataBundle(filter);
@@ -7349,7 +7300,7 @@ void MainWindow::on_actionSeed_Mask_triggered()
 
   if (frame != NULL) {
     int channelNumber = frame->document()->getStack()->channelNumber();
-    m_autoTraceDlg->setChannelNumber(channelNumber);
+    m_autoTraceDlg->setChannelCount(channelNumber);
 
     Stack *stackData =
         C_Stack::clone(

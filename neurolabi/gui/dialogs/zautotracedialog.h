@@ -3,32 +3,33 @@
 
 #include <QDialog>
 
-class QCheckBox;
-class ZLabeledSpinBoxWidget;
-class ZLabeledComboWidget;
+namespace Ui {
+class ZAutoTraceDialog;
+}
 
 class ZAutoTraceDialog : public QDialog
 {
   Q_OBJECT
+
 public:
-  explicit ZAutoTraceDialog(QWidget *parent = 0, Qt::WindowFlags f = 0);
+  explicit ZAutoTraceDialog(QWidget *parent = 0);
   ~ZAutoTraceDialog();
 
-  bool getDoResample() const;
-
+  bool resampling() const;
   int getTraceLevel() const;
 
-  void setChannelNumber(int count);
+  void setChannelCount(int count);
   int getChannel() const;
 
-signals:
+private:
+  bool usingDefaultLevel() const;
 
-public slots:
+private slots:
+  void updateWidget();
 
 private:
-  QCheckBox *m_resampleCheckbox;
-  ZLabeledSpinBoxWidget *m_levelSpinBox;
-  ZLabeledComboWidget *m_channelWidget;
+  Ui::ZAutoTraceDialog *ui;
+
 };
 
 #endif // ZAUTOTRACEDIALOG_H

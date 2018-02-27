@@ -508,8 +508,8 @@ HEADERS += mainwindow.h \
     dialogs/zsubtractswcsdialog.h \
     dialogs/zmarkswcsomadialog.h \
     zlabeledspinboxwidget.h \
-    dialogs/zspinboxgroupdialog.h \
     dialogs/zautotracedialog.h \
+    dialogs/zspinboxgroupdialog.h \
     zstackviewmanager.h \
     zstackviewparam.h \
     zflyemprojectmanager.h \
@@ -686,7 +686,8 @@ FORMS += dialogs/settingdialog.ui \
     flyem/zflyembookmarkwidget.ui \
     flyem/flyemorthocontrolform.ui \
     dialogs/stringlistdialog.ui \
-    dialogs/zswcisolationdialog.ui
+    dialogs/zswcisolationdialog.ui \
+    dialogs/zautotracedialog.ui
 SOURCES += main.cpp \
     mainwindow.cpp \
     zstackview.cpp \

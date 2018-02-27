@@ -258,11 +258,13 @@ int main(int argc, char *argv[])
       mainWin->showStackFrame(fileList, true);
     }
 
+#if 0 //Disable experimental argument processing
     if (argc > 1) {
       mainWin->processArgument(argv[1]);
     } /*else {
       mainWin->processArgument(QString("test %1: %2").arg(argc).arg(argv[0]));
     }*/
+#endif
 
     int result =  app.exec();
 

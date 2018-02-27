@@ -260,7 +260,8 @@ public:
 
   enum EComponent {
     DEPTH_FIRST_ARRAY, BREADTH_FIRST_ARRAY, LEAF_ARRAY, TERMINAL_ARRAY,
-    BRANCH_POINT_ARRAY, Z_SORTED_ARRAY, BOUND_BOX, ALL_COMPONENT
+    BRANCH_POINT_ARRAY, Z_SORTED_ARRAY, ID_SORTED_ARRAY,
+    BOUND_BOX, ALL_COMPONENT
   };
 
   bool isDeprecated(EComponent component) const;
@@ -648,7 +649,7 @@ public:
 
   enum EIteratorOption {
     DEPTH_FIRST_ITERATOR, BREADTH_FIRST_ITERATOR, LEAF_ITERATOR, TERMINAL_ITERATOR,
-    BRANCH_POINT_ITERATOR, Z_SORT_ITERATOR
+    BRANCH_POINT_ITERATOR, Z_SORT_ITERATOR, ID_SORT_ITERATOR
   };
 
   /*!
@@ -837,6 +838,7 @@ private:
   mutable std::vector<Swc_Tree_Node*> m_terminalArray;
   mutable std::vector<Swc_Tree_Node*> m_branchPointArray;
   mutable std::vector<Swc_Tree_Node*> m_zSortedArray;
+  mutable std::vector<Swc_Tree_Node*> m_idSortedArray;
   mutable std::set<Swc_Tree_Node*> m_selectedNode;
   mutable std::set<Swc_Tree_Node*> m_prevSelectedNode;
   mutable ZSwcTreeNodeSelector m_selector;
