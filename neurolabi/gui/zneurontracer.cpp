@@ -1471,6 +1471,14 @@ void ZNeuronTracer::initTraceWorkspace(ZStack *stack)
   }
 }
 
+void ZNeuronTracer::updateTraceWorkspaceResolution(
+    double xRes, double yRes, double zRes)
+{
+  m_traceWorkspace->resolution[0] = xRes;
+  m_traceWorkspace->resolution[1] = yRes;
+  m_traceWorkspace->resolution[2] = zRes;
+}
+
 void ZNeuronTracer::updateTraceWorkspace(
     int traceEffort, bool traceMasked, double xRes, double yRes, double zRes)
 {
@@ -1480,9 +1488,7 @@ void ZNeuronTracer::updateTraceWorkspace(
     m_traceWorkspace->refit = TRUE;
   }
 
-  m_traceWorkspace->resolution[0] = xRes;
-  m_traceWorkspace->resolution[1] = yRes;
-  m_traceWorkspace->resolution[2] = zRes;
+  updateTraceWorkspaceResolution(xRes, yRes, zRes);
 
   loadTraceMask(traceMasked);
 }

@@ -202,20 +202,25 @@ double SettingDialog::zResolution()
   return m_resolution[2];
 }
 
+/*
 double SettingDialog::xScale()
 {
   return m_scales[0];
 }
 
+
 double SettingDialog::zScale()
 {
   return m_scales[2];
 }
+*/
 
+/*
 int SettingDialog::traceEffort()
 {
   return m_traceEffort;
 }
+*/
 
 int SettingDialog::receptor()
 {

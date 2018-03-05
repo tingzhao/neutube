@@ -194,7 +194,7 @@ public: //frame parameters
   double xReconstructScale();
   double zReconstructScale();
   char unit();
-  int traceEffort();
+//  int traceEffort();
   double autoTraceMinScore();
   double manualTraceMinScore();
   bool traceMasked();

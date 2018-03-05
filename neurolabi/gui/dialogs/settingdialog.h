@@ -24,10 +24,10 @@ public:
   double xResolution();
   double yResolution();
   double zResolution();
-  double xScale();
-  double zScale();
+//  double xScale();
+//  double zScale();
   char unit();
-  int traceEffort();
+//  int traceEffort();
 //  double traceMinScore();
   double autoTraceMinScore() const;
   double manualTraceMinScore() const;

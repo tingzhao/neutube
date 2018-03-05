@@ -243,8 +243,8 @@ void ZStackFrame::addDocData(const ZStackDocReader &reader)
   }
   m_doc->addData(reader);
 
-  m_doc->updateTraceWorkspace(traceEffort(), traceMasked(),
-                              xResolution(), yResolution(), zResolution());
+  m_doc->updateTraceWorkspaceResolution(
+        xResolution(), yResolution(), zResolution());
   m_doc->updateConnectionTestWorkspace(xResolution(), yResolution(),
                                        zResolution(), unit(),
                                        reconstructDistThre(),
@@ -372,8 +372,8 @@ void ZStackFrame::updateDocument()
 {
   updateSignalSlot(connectFunc);
 
-  m_doc->updateTraceWorkspace(traceEffort(), traceMasked(),
-                              xResolution(), yResolution(), zResolution());
+  m_doc->updateTraceWorkspaceResolution(
+        xResolution(), yResolution(), zResolution());
   m_doc->updateConnectionTestWorkspace(xResolution(), yResolution(),
                                        zResolution(), unit(),
                                        reconstructDistThre(),
@@ -770,10 +770,13 @@ double ZStackFrame::zReconstructScale()
   return m_settingDlg->zScale();
 }
 */
+
+/*
 int ZStackFrame::traceEffort()
 {
   return m_settingDlg->traceEffort();
 }
+*/
 
 bool ZStackFrame::traceMasked()
 {
@@ -865,14 +868,14 @@ void ZStackFrame::synchronizeDocument()
                             m_settingDlg->yResolution(),
                             m_settingDlg->zResolution(),
                             m_settingDlg->unit());
-  document()->setAutoTraceMinScore(m_settingDlg->autoTraceMinScore());
-  document()->setManualTraceMinScore(m_settingDlg->manualTraceMinScore());
-  document()->setReceptor(m_settingDlg->receptor(), m_settingDlg->useCone());
+//  document()->setAutoTraceMinScore(m_settingDlg->autoTraceMinScore());
+//  document()->setManualTraceMinScore(m_settingDlg->manualTraceMinScore());
+//  document()->setReceptor(m_settingDlg->receptor(), m_settingDlg->useCone());
   if (hasProject()) {
     document()->setWorkdir(m_traceProject->workspacePath().toLocal8Bit().constData());
   }
-  m_doc->updateTraceWorkspace(traceEffort(), traceMasked(),
-                              xResolution(), yResolution(), zResolution());
+  m_doc->updateTraceWorkspaceResolution(
+        xResolution(), yResolution(), zResolution());
   m_doc->updateConnectionTestWorkspace(xResolution(), yResolution(),
                                        zResolution(), unit(),
                                        reconstructDistThre(),

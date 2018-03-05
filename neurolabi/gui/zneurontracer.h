@@ -141,6 +141,8 @@ public:
 
   void updateTraceWorkspace(int traceEffort, bool traceMasked,
                             double xRes, double yRes, double zRes);
+  void updateTraceWorkspaceResolution(
+      double xRes, double yRes, double zRes);
   void updateConnectionTestWorkspace(
       double xRes, double yRes, double zRes,
       char unit, double distThre, bool spTest, bool crossoverTest);

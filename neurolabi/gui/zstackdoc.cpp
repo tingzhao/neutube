@@ -511,6 +511,11 @@ void ZStackDoc::updateTraceWorkspace(int traceEffort, bool traceMasked,
                                       xRes, yRes, zRes);
 }
 
+void ZStackDoc::updateTraceWorkspaceResolution(double xRes, double yRes, double zRes)
+{
+  m_neuronTracer.updateTraceWorkspaceResolution(xRes, yRes, zRes);
+}
+
 void ZStackDoc::updateConnectionTestWorkspace(
     double xRes, double yRes, double zRes,
     char unit, double distThre, bool spTest, bool crossoverTest)
