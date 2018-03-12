@@ -119,7 +119,7 @@ void ZStackView::init()
 //  m_topLayout->addWidget(m_msgLabel);
   m_topLayout->addWidget(m_activeLabel);
 
-  //m_topLayout->addWidget(m_progress);
+//  m_topLayout->addWidget(m_progress);
 
 
   m_secondTopLayout = new QHBoxLayout;
@@ -2418,6 +2418,18 @@ void ZStackView::customizeWidget()
     m_secondTopLayout->addWidget(vis3dButton);
     connect(vis3dButton, SIGNAL(clicked()), this, SLOT(request3DVis()));
 
+    QPushButton *autoTraceButton = new QPushButton(this);
+    autoTraceButton->setIcon(QIcon(":/images/autotrace.png"));
+    autoTraceButton->setToolTip("Automatic Tracing");
+    m_secondTopLayout->addWidget(autoTraceButton);
+    connect(autoTraceButton, SIGNAL(clicked()), this, SLOT(requestAutoTracing()));
+
+    QPushButton *settingButton = new QPushButton(this);
+    settingButton->setIcon(QIcon(":/images/setting.png"));
+    settingButton->setToolTip("Settings");
+    m_secondTopLayout->addWidget(settingButton);
+    connect(settingButton, SIGNAL(clicked()), this, SLOT(requestSetting()));
+
     if (GET_APPLICATION_NAME == "Biocytin") {
       if (buddyDocument() != NULL) {
         if (buddyDocument()->getTag() == NeuTube::Document::BIOCYTIN_STACK) {
@@ -2451,6 +2463,16 @@ void ZStackView::addHorizontalWidget(QSpacerItem *spacer)
 void ZStackView::closeChildFrame()
 {
   emit closingChildFrame();
+}
+
+void ZStackView::requestSetting()
+{
+  emit showingSetting();
+}
+
+void ZStackView::requestAutoTracing()
+{
+  emit autoTracing();
 }
 
 void ZStackView::request3DVis()

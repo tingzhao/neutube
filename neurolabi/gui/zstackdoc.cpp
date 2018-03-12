@@ -5718,6 +5718,7 @@ bool ZStackDoc::executeSwcNodeSmartExtendCommand(
 //          m_neuronTracer.useEdgePath(true);
 //        }
 
+        m_neuronTracer.config();
         Swc_Tree *branch = m_neuronTracer.trace(
               SwcTreeNode::x(prevNode), SwcTreeNode::y(prevNode),
               SwcTreeNode::z(prevNode), SwcTreeNode::radius(prevNode),
@@ -6965,6 +6966,7 @@ bool ZStackDoc::executeSmartConnectSwcNodeCommand(
                       getStack()->depth());
   }
 
+  m_neuronTracer.config();
   Swc_Tree *branch = m_neuronTracer.trace(
         SwcTreeNode::x(tn1), SwcTreeNode::y(tn1),
         SwcTreeNode::z(tn1), SwcTreeNode::radius(tn1),
@@ -7559,6 +7561,7 @@ bool ZStackDoc::executeTraceSwcBranchCommand(
   //                      getStackOffset().z());
 
   refreshTraceMask();
+  m_neuronTracer.config();
   ZSwcPath branch = m_neuronTracer.trace(x, y, z);
 
   if (branch.size() > 1) {
@@ -7771,6 +7774,7 @@ bool ZStackDoc::executeAutoTraceCommand(int traceLevel, bool doResample, int c)
 
   updateTraceMask();
 
+  m_neuronTracer.config();
   ZSwcTree *tree = m_neuronTracer.trace(getStack(), doResample);
 
   m_neuronTracer.setRecoverLevel(recover);

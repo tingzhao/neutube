@@ -13,7 +13,7 @@
     "enhanceMask": false,
     "seedMethod": 1,
     "recover": 1,
-    "maxEucDist": 10
+    "maxEucDist": 15
   },
   "level": {
     "1": {

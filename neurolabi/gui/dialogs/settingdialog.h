@@ -37,7 +37,7 @@ public:
   inline int rootOption() { return m_rootOption; }
   inline double distThre() { return m_distThre; }
   inline bool crossoverTest() { return m_crossoverTest; }
-  inline bool singleTree() { return m_singleTree; }
+//  inline bool singleTree() { return m_singleTree; }
   inline bool removeOvershoot() { return m_removeOvershoot; }
   inline int reconstructEffort() { return m_reconstructEffort; }
 

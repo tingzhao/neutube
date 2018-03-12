@@ -275,6 +275,8 @@ public slots:
 
   void displayActiveDecoration(bool display = true);
   void request3DVis();
+  void requestSetting();
+  void requestAutoTracing();
   void requestQuick3DVis();
   void requestHighresQuick3DVis();
   void requestMerge();
@@ -298,6 +300,8 @@ signals:
 //  void viewPortChanged();
   void messageGenerated(const ZWidgetMessage &message);
   void closingChildFrame();
+  void showingSetting();
+  void autoTracing();
 
 public:
   static QImage::Format stackKindToImageFormat(int kind);

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>424</width>
-    <height>198</height>
+    <width>415</width>
+    <height>230</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -89,7 +89,7 @@
      <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#008000;&quot;&gt;Hint: More budget means longer computing time and sometimes &lt;br&gt;improves results. Using Default is recommended.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#008000;&quot;&gt;Hint: More budget means longer computing time and sometimes &lt;br&gt;improves results. &lt;b&gt;Using Default is recommended&lt;/b&gt;.&lt;br&gt;&lt;span style=&quot; color:#808000;&quot;&gt;For curious users: Right next to the &lt;i&gt;auto-tracing&lt;/i&gt; button, &lt;br&gt;the &lt;i&gt;settings&lt;/i&gt; button can be used to change the default settings.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>

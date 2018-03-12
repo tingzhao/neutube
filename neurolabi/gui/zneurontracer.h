@@ -11,6 +11,7 @@
 #include "tz_locseg_chain.h"
 #include "zprogressable.h"
 #include "zintpoint.h"
+#include "zneurontracerconfig.h"
 
 class ZStack;
 class ZSwcTree;
@@ -71,6 +72,8 @@ public:
   void updateMask(Swc_Tree *tree);
   void setTraceWorkspace(Trace_Workspace *workspace);
   void setConnWorkspace(Connection_Test_Workspace *workspace);
+
+  void config();
 
   Swc_Tree* trace(double x1, double y1, double z1, double r1,
                  double x2, double y2, double z2, double r2);
@@ -173,6 +176,10 @@ public:
   Stack* computeSeedMask();
   Stack* computeSeedMask(Stack *stack);
 
+  ZNeuronTracerConfig* getConfigRef() {
+    return &m_config;
+  }
+
 public:
   void test();
 
@@ -201,8 +208,6 @@ private:
   void clearBuffer();
 
   void init();
-  void config();
-
 
 private:
   ZStack *m_stack;
@@ -235,6 +240,7 @@ private:
   double m_greyFactor;
   double m_greyOffset;
 
+  ZNeuronTracerConfig m_config;
   /*
   static const char *m_levelKey;
   static const char *m_minimalScoreKey;

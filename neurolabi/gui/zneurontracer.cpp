@@ -216,12 +216,21 @@ void ZNeuronTracer::init()
   m_greyOffset = 0.0;
   m_preferredSignalChannel = 0;
 
+  m_config = ZNeuronTracerConfig::getInstance();
+
   config();
 }
 
 void ZNeuronTracer::config()
 {
-  ZNeuronTracerConfig &config = ZNeuronTracerConfig::getInstance();
+//  ZNeuronTracerConfig &config = ZNeuronTracerConfig::getInstance();
+  ZNeuronTracerConfig &config = m_config;
+
+#ifdef _DEBUG_
+  std::cout << "Default configuration:" << std::endl;
+  config.print();
+#endif
+
 
   m_seedMinScore = config.getMinSeedScore();
   m_autoTraceMinScore = config.getMinAutoScore();
@@ -1444,7 +1453,7 @@ void ZNeuronTracer::initTraceWorkspace(Stack *stack)
   }
 
   //m_traceWorkspace->min_score = 0.35;
-  m_traceWorkspace->tune_end = ZNeuronTracerConfig::getInstance().tuningEnd();
+  m_traceWorkspace->tune_end = m_config.tuningEnd();
   m_traceWorkspace->add_hit = TRUE;
 
 
@@ -1506,9 +1515,8 @@ void ZNeuronTracer::initConnectionTestWorkspace()
 {
   if (m_connWorkspace == NULL) {
     m_connWorkspace = New_Connection_Test_Workspace();
-    m_connWorkspace->sp_test = ZNeuronTracerConfig::getInstance().spTest();
-    m_connWorkspace->crossover_test =
-        ZNeuronTracerConfig::getInstance().crossoverTest();
+    m_connWorkspace->sp_test = m_config.spTest();
+    m_connWorkspace->crossover_test = m_config.crossoverTest();
   }
 }
 
@@ -1540,7 +1548,7 @@ void ZNeuronTracer::setTraceLevel(int level)
   config();
 
   if (level > 0) {
-    loadJsonObject(ZNeuronTracerConfig::getInstance().getLevelJson(level));
+    loadJsonObject(m_config.getLevelJson(level));
   }
 
 #if 0

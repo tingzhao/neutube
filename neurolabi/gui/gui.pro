@@ -612,7 +612,8 @@ HEADERS += mainwindow.h \
     dialogs/stringlistdialog.h \
     flyem/zflyemtodoitem.h \
     flyem/zflyemtodolist.h \
-    dialogs/zswcisolationdialog.h
+    dialogs/zswcisolationdialog.h \
+    dialogs/zstackframesettingdialog.h
 
 FORMS += dialogs/settingdialog.ui \
     dialogs/frameinfodialog.ui \
@@ -687,7 +688,8 @@ FORMS += dialogs/settingdialog.ui \
     flyem/flyemorthocontrolform.ui \
     dialogs/stringlistdialog.ui \
     dialogs/zswcisolationdialog.ui \
-    dialogs/zautotracedialog.ui
+    dialogs/zautotracedialog.ui \
+    dialogs/zstackframesettingdialog.ui
 SOURCES += main.cpp \
     mainwindow.cpp \
     zstackview.cpp \
@@ -1072,7 +1074,8 @@ SOURCES += main.cpp \
     dialogs/stringlistdialog.cpp \
     flyem/zflyemtodoitem.cpp \
     flyem/zflyemtodolist.cpp \
-    dialogs/zswcisolationdialog.cpp
+    dialogs/zswcisolationdialog.cpp \
+    dialogs/zstackframesettingdialog.cpp
 
 OTHER_FILES += \
     extlib.pri \

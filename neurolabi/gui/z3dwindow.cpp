@@ -4178,7 +4178,10 @@ void Z3DWindow::setZScale(double scale)
   setZScale(LAYER_GRAPH, scale);
   setZScale(LAYER_SWC, scale);
   setZScale(LAYER_PUNCTA, scale);
-  setZScale(LAYER_VOLUME, scale);
+//  setZScale(LAYER_VOLUME, scale);
+  if (m_volumeSource != NULL) {
+    m_volumeSource->setZScale(scale);
+  }
 }
 
 void Z3DWindow::setScale(double sx, double sy, double sz)

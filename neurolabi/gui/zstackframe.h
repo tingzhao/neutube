@@ -11,6 +11,7 @@
 #include <QStringList>
 #include <QUrl>
 #include <QStatusBar>
+
 #include "tz_image_lib_defs.h"
 #include "plotsettings.h"
 #include "zinteractivecontext.h"
@@ -29,7 +30,8 @@
 
 class ZStackView;
 class ZStackPresenter;
-class SettingDialog;
+//class SettingDialog;
+class ZStackFrameSettingDialog;
 class ZLocsegChain;
 class ZTraceProject;
 class QProgressBar;
@@ -44,6 +46,9 @@ class MainWindow;
 class QMdiArea;
 class ZMessage;
 class ZMessageManager;
+class ZAutoTraceDialog;
+class QProgressDialog;
+class QProgressBar;
 
 class ZStackFrame : public QMdiSubWindow, public ZReportable
 {
@@ -130,7 +135,6 @@ public:
 
   void saveStack(const QString &filePath);
 
-  void showSetting();
   void showManageObjsDialog();
 
   double displayGreyMin(int c=0) const;
@@ -195,20 +199,20 @@ public: //frame parameters
   double zReconstructScale();
   char unit();
 //  int traceEffort();
-  double autoTraceMinScore();
-  double manualTraceMinScore();
-  bool traceMasked();
-  double reconstructDistThre();
-  bool crossoverTest();
-  bool singleTree();
-  bool removeOvershoot();
-  int reconstructRootOption();
-  BOOL reconstructSpTest();
+//  double autoTraceMinScore();
+//  double manualTraceMinScore();
+//  bool traceMasked();
+//  double reconstructDistThre();
+//  bool crossoverTest();
+//  bool singleTree();
+//  bool removeOvershoot();
+//  int reconstructRootOption();
+//  BOOL reconstructSpTest();
   void synchronizeSetting();
   void synchronizeDocument();
 
 public: //set frame parameters
-  void setResolution(const double *res);
+//  void setResolution(const double *res);
   void setBc(double greyScale, double greyOffset, int channel);
   void autoBcAdjust();
 
@@ -277,6 +281,10 @@ public slots:
 
 private slots:
   void updateSwcExtensionHint();
+  void showSetting();
+  void autoTrace();
+  void endProgress();
+  void startProgress(const QString &title);
 
 signals:
   void infoChanged();
@@ -288,6 +296,7 @@ signals:
   void splitStarted();
   void keyEventEmitted(QKeyEvent *event);
   void stackBoundBoxChanged();
+  void progressDone();
 
 protected: // Events
   virtual void keyPressEvent(QKeyEvent *event);
@@ -318,14 +327,21 @@ protected:
 
 private:
   void setView(ZStackView *view);
+  void updateTraceConfig();
+  void autoTraceFunc();
+  QProgressDialog* getProgressDialog();
+  QProgressBar* getProgressBar();
+
   //ZMessageManager *getMessageManager();
 
 protected:
   static void BaseConstruct(ZStackFrame *frame, ZSharedPointer<ZStackDoc> doc);
 
 protected:
-  SettingDialog *m_settingDlg;
+  ZStackFrameSettingDialog *m_settingDlg;
   QDialog *m_manageObjsDlg;
+  ZAutoTraceDialog *m_autoTraceDlg;
+  QProgressDialog *m_progress;
 
   ZSharedPointer<ZStackDoc> m_doc;
   ZStackPresenter *m_presenter;

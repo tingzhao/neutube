@@ -842,7 +842,7 @@ void MainWindow::customizeActions()
   m_ui->actionTree_Preview->setVisible(false);
   m_ui->actionTracing_result->setVisible(false);
   m_ui->actionFit_Segment->setVisible(false);
-  m_ui->actionAutomatic->setVisible(isTracingOn);
+  m_ui->actionAutomatic->setVisible(false);
   m_ui->actionAutomatic_Axon->setVisible(isTracingOn);
   m_ui->actionFrom_SWC->setVisible(false);
 
@@ -998,7 +998,7 @@ void MainWindow::createMenus()
   noTraceAction = m_ui->actionDisable;
   fitsegAction = m_ui->actionFit_Segment;
   traceTubeAction = m_ui->actionTrace_Tube;
-  autoTraceAction = m_ui->actionAutomatic;
+//  autoTraceAction = m_ui->actionAutomatic;
 
   noMarkPunctaAction = m_ui->actionDisable_Mark_Puncta;
   markPunctaAction = m_ui->actionMark_Puncta;
@@ -1014,7 +1014,7 @@ void MainWindow::createMenus()
   m_ui->menuEdge_Detection->menuAction()->setVisible(false);
 #endif
 
-  m_ui->menuOptions->addAction(settingAction);
+//  m_ui->menuOptions->addAction(settingAction);
 //#ifdef _DEBUG_
   m_ui->menuHelp->addAction(testAction);
 //#endif
@@ -1098,7 +1098,7 @@ void MainWindow::createToolBars()
 #ifdef _ADVANCED_
   //m_ui->toolBar->addAction(infoViewAction);
 #endif
-  m_ui->toolBar->addAction(settingAction);
+//  m_ui->toolBar->addAction(settingAction);
   m_ui->toolBar->addAction(screenshotAction);
 //#ifdef _DEBUG_
   m_ui->toolBar->addAction(testAction);
@@ -2425,7 +2425,7 @@ void MainWindow::subtractSwcs()
 void MainWindow::setOption()
 {
   if (activeStackFrame() != NULL) {
-    activeStackFrame()->showSetting();
+//    activeStackFrame()->showSetting();
   }
 }
 
