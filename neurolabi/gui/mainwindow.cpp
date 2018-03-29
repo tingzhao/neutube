@@ -949,7 +949,7 @@ void MainWindow::customizeActions()
   m_ui->actionDisable->setVisible(false);
   m_ui->menuPuncta->menuAction()->setVisible(false);
   //m_ui->menuSwc->menuAction()->setVisible(false);
-  m_ui->actionEdit_Swc->setVisible(false);
+//  m_ui->actionEdit_Swc->setVisible(false);
   m_ui->actionRescale_Swc->setVisible(false);
   m_ui->menuQuery->menuAction()->setVisible(false);
   m_ui->menuOptions->menuAction()->setVisible(false);

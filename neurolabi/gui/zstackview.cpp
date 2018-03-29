@@ -2412,6 +2412,7 @@ void ZStackView::customizeWidget()
             this, SLOT(requestHighresQuick3DVis()));
             */
   } else {
+    m_secondTopLayout->addStretch();
     QPushButton *vis3dButton = new QPushButton(this);
     vis3dButton->setText("3D");
     vis3dButton->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
