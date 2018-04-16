@@ -46,15 +46,15 @@ void ZEditSwcDialog::_init()
   setStyleSheet("QGroupBox{padding-top:15px; margin-top:-15px}");
 
   QVBoxLayout *mainLayout = new QVBoxLayout;
-  QTabWidget *tabWidget = new QTabWidget(this);
+  m_tabWidget = new QTabWidget(this);
   QWidget *settingWidget = new QWidget(this);
 //  QWidget *infoWidget = new QWidget(this);
 
   m_messageWidget = new QTextEdit(this);
   m_messageWidget->setReadOnly(true);
 
-  tabWidget->addTab(settingWidget, "Settings");
-  tabWidget->addTab(m_messageWidget, "Message");
+  m_tabWidget->addTab(settingWidget, "Settings");
+  m_tabWidget->addTab(m_messageWidget, "Message");
 
   m_inputFileEdit = new QLineEdit;
 //  m_inputFileEdit->setReadOnly(true);
@@ -112,7 +112,7 @@ void ZEditSwcDialog::_init()
 
   settingWidget->setLayout(settingLayout);
 
-  mainLayout->addWidget(tabWidget);
+  mainLayout->addWidget(m_tabWidget);
   mainLayout->addWidget(m_buttonBox);
 
   setLayout(mainLayout);
@@ -1602,8 +1602,10 @@ void ZEditSwcDialog::runOperations()
     outputFileName = outFileInfo.absoluteFilePath();
   }
 
-
   clearMessage();
+
+  m_tabWidget->setCurrentIndex(1);
+
   dump("Start processing ...");
 
   foreach (const QString &fileName, fileList) {

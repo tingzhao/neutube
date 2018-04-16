@@ -957,6 +957,17 @@ void ZStackProcessor::ShrinkSkeleton(Stack *stack, int level)
   }
 }
 
+void ZStackProcessor::FlipY(ZStack *stack)
+{
+  if (stack != NULL) {
+    for (int c = 0; c < stack->channelNumber(); ++c) {
+      Stack *stackData = stack->c_stack(c);
+      Flip_Stack_Y(stackData, stackData);
+    }
+    stack->deprecateDependent(ZStack::MC_STACK);
+  }
+}
+
 void ZStackProcessor::ShrinkSkeleton(Stack *stack)
 {
   if (C_Stack::kind(stack) != GREY) {

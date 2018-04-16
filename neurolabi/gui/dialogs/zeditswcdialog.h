@@ -17,6 +17,7 @@ class QLineEdit;
 class QRadioButton;
 class QComboBox;
 class QTextEdit;
+class QTabWidget;
 QT_END_NAMESPACE
 
 class ZSwcTree;
@@ -96,6 +97,8 @@ private:
   void _init();
 
 private:
+  QTabWidget *m_tabWidget;
+
   QGroupBox *m_inputGroupBox;
   QGroupBox *m_outputGroupBox;
   QGroupBox *m_operationGroupBox;

@@ -2176,11 +2176,15 @@ void MainWindow::openRecentFile()
 void MainWindow::about()
 {
   QString title = QString("<h2>%1</h2>").arg(GET_SOFTWARE_NAME.c_str());
+
+#if defined(_CURRENT_COMMIT_)
   if (!NeutubeConfig::getInstance().getApplication().empty()) {
     title += QString("<p>") +
         NeutubeConfig::getInstance().getApplication().c_str() + " Edition" +
-        " (dd874dde6650b9afed51bbad6a9617530bada738)</p>";
+        " (" + _CURRENT_COMMIT_ + ")</p>";
   }
+#endif
+
   QString thirdPartyLib = QString("<p><a href=\"file:///%1/doc/ThirdPartyLibraries.txt\">Third Party Libraries</a></p>")
       .arg(QApplication::applicationDirPath());
   QMessageBox::about(this, QString("About %1").arg(GET_SOFTWARE_NAME.c_str()),
@@ -3968,6 +3972,15 @@ void MainWindow::on_actionInvert_triggered()
     frame->invertStack();
   }
 }
+
+void MainWindow::on_actionFlip_Y_triggered()
+{
+  ZStackFrame *frame = activeStackFrame();
+  if (frame != NULL) {
+    frame->yFlipStack();
+  }
+}
+
 
 void MainWindow::on_actionFlyEmQATrain_triggered()
 {
@@ -7493,4 +7506,3 @@ void MainWindow::MessageProcessor::processMessage(
     }
   }
 }
-

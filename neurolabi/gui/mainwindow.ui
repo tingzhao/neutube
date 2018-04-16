@@ -175,6 +175,7 @@
      <addaction name="actionUpdate"/>
      <addaction name="actionExtract_Channel"/>
      <addaction name="actionInvert"/>
+     <addaction name="actionFlip_Y"/>
      <addaction name="actionMake_Projection"/>
      <addaction name="actionSubtract_Background"/>
      <addaction name="menuFilter"/>
@@ -969,7 +970,7 @@
   </action>
   <action name="actionInvert">
    <property name="text">
-    <string>Invert</string>
+    <string>Invert Intensity</string>
    </property>
   </action>
   <action name="actionFlyEmQATrain">
@@ -1458,6 +1459,11 @@
   <action name="actionSeed_Mask">
    <property name="text">
     <string>Foreground Mask</string>
+   </property>
+  </action>
+  <action name="actionFlip_Y">
+   <property name="text">
+    <string>Flip Y</string>
    </property>
   </action>
  </widget>

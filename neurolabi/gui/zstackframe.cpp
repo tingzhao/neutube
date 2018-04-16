@@ -1523,6 +1523,13 @@ void ZStackFrame::invertStack()
   }
 }
 
+void ZStackFrame::yFlipStack()
+{
+  if (m_doc->hasStackData()) {
+    m_doc->flipY();
+  }
+}
+
 void ZStackFrame::subtractBackground()
 {
   if (m_doc->hasStackData()) {

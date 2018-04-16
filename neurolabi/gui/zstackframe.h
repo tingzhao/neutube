@@ -240,6 +240,7 @@ public:
       const std::vector<std::vector<double> > &selected);
 
   void invertStack();
+  void yFlipStack();
   void subtractBackground();
   void removeChildFrame(ZStackFrame *frame);
   void detachParentFrame();

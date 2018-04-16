@@ -450,6 +450,7 @@ public: //Image processing
   bool enhanceLine();
   bool watershed();
   bool invert();
+  bool flipY();
   bool subtractBackground();
   int findLoop(int minLoopSize = 100);
   void bwthin();

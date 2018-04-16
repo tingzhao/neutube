@@ -474,6 +474,8 @@ private slots:
 
   void on_actionSeed_Mask_triggered();
 
+  void on_actionFlip_Y_triggered();
+
 private:
   void createActions();
   void createFileActions();

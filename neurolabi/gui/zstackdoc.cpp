@@ -4460,6 +4460,18 @@ bool ZStackDoc::invert()
   return false;
 }
 
+bool ZStackDoc::flipY()
+{
+  ZStack *mainStack = getStack();
+  if (mainStack != NULL) {
+    ZStackProcessor::FlipY(mainStack);
+    notifyStackModified();
+    return true;
+  }
+
+  return false;
+}
+
 bool ZStackDoc::subtractBackground()
 {
   ZStack *mainStack = getStack();
