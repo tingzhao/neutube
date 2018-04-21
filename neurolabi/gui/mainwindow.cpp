@@ -821,6 +821,8 @@ void MainWindow::setActionActivity()
   m_stackActionActivator.registerAction(m_ui->actionExtract_Channel, true);
   m_stackActionActivator.registerAction(m_ui->actionBinary_SWC, true);
   m_stackActionActivator.registerAction(m_ui->actionUpdate, true);
+  m_stackActionActivator.registerAction(m_ui->actionFlip_Y, true);
+  m_stackActionActivator.registerAction(m_ui->actionSubtract_Background, true);
 
   m_stackActionActivator.registerAction(m_ui->menuFilter->menuAction(), true);
   m_stackActionActivator.registerAction(m_ui->menuBinary_Morphology->menuAction(), true);
@@ -2182,6 +2184,12 @@ void MainWindow::about()
     title += QString("<p>") +
         NeutubeConfig::getInstance().getApplication().c_str() + " Edition" +
         " (" + _CURRENT_COMMIT_ + ")</p>";
+  }
+#else
+  if (!NeutubeConfig::getInstance().getApplication().empty()) {
+    title += QString("<p>") +
+        NeutubeConfig::getInstance().getApplication().c_str() + " Edition" +
+        " (" + "46606ee8be411a0c091e576449717ad04c8e61ca" + ")</p>";
   }
 #endif
 
