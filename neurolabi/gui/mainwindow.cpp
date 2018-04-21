@@ -2189,7 +2189,7 @@ void MainWindow::about()
   if (!NeutubeConfig::getInstance().getApplication().empty()) {
     title += QString("<p>") +
         NeutubeConfig::getInstance().getApplication().c_str() + " Edition" +
-        " (" + "46606ee8be411a0c091e576449717ad04c8e61ca" + ")</p>";
+        " (" + "c10970c8fec99aecbdbbe62d3558bec703ef8170" + ")</p>";
   }
 #endif
 
