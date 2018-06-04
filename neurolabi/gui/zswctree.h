@@ -238,6 +238,18 @@ public:
    */
   bool isIdConsistent() const;
 
+  /*!
+   * \brief Check if all the node IDs of are valid.
+   *
+   * A node n has a valid id configuraiton iff it has any of the following properties:
+   *  1. ID(n) >= 0, PID(n) == ID(P(n)) and n is not a root
+   *  2. ID(n) >= 0, PID(n) == -1 and n is a root
+   *  3. ID(n) < 0, and n is a root
+   *
+   * No duplicate non-negative IDs are allowed.
+   */
+  bool isIdValid() const;
+
   virtual int swcFprint(FILE *fp, int start_id = 0, int parent_id = -1,
                         double z_scale = 1.0);
   virtual void swcExport(const char *filePath);

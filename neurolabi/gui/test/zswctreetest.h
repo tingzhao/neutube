@@ -602,16 +602,56 @@ TEST(SwcTree, ID)
 {
   {
     ZSwcTree tree;
-    tree.load(GET_TEST_DATA_DIR + "/benchmark/swc/depth_first.swc");
+    tree.load(GET_TEST_DATA_DIR + "/_benchmark/swc/depth_first.swc");
     ASSERT_TRUE(tree.isIdConsistent());
+    ASSERT_TRUE(tree.isIdValid());
 
     tree.forceVirtualRoot();
     ASSERT_TRUE(tree.isIdConsistent());
+    ASSERT_TRUE(tree.isIdValid());
 
     Swc_Tree_Node *tn = tree.root();
     SwcTreeNode::setId(tn, 2);
     ASSERT_FALSE(tree.isIdConsistent());
+    ASSERT_FALSE(tree.isIdValid());
   }
+
+  {
+    ZSwcTree tree;
+    ASSERT_TRUE(tree.isIdValid());
+
+    Swc_Tree_Node *root = SwcTreeNode::makeVirtualNode();
+    tree.setDataFromNode(root);
+    ASSERT_TRUE(tree.isIdValid());
+
+    Swc_Tree_Node *tn = SwcTreeNode::makePointer();
+    SwcTreeNode::setId(tn, 1);
+    SwcTreeNode::setParent(tn, root);
+    SwcTreeNode::setParentId(tn, 0);
+     ASSERT_FALSE(tree.isIdValid());
+
+    SwcTreeNode::setParentId(tn, -1);
+    ASSERT_TRUE(tree.isIdValid());
+
+    tn = SwcTreeNode::makePointer();
+    SwcTreeNode::setId(tn, 1);
+    SwcTreeNode::setParentId(tn, -1);
+    SwcTreeNode::setParent(tn, root);
+    ASSERT_FALSE(tree.isIdValid());
+
+    SwcTreeNode::setId(tn, 2);
+    ASSERT_TRUE(tree.isIdValid());
+
+    tn = SwcTreeNode::makePointer(0, 0, 0, 1, tn);
+    SwcTreeNode::setId(tn, 3);
+    ASSERT_FALSE(tree.isIdValid());
+
+    SwcTreeNode::setParentId(tn, 2);
+    ASSERT_TRUE(tree.isIdValid());
+
+
+  }
+
 }
 
 #endif
