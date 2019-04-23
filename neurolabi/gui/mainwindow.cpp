@@ -588,10 +588,7 @@ void MainWindow::createFileActions()
 
   connFeatExportAction = new QAction(tr("&Connection feature"),
                                      m_writeActionGroup);
-  /*
-  connect(connFeatExportAction, SIGNAL(triggered()),
-          this, SLOT(exportTubeConnectionFeat()));
-*/
+
   chainSourceExportAction = new QAction(tr("Chain file list"),
                                         m_writeActionGroup);
   connect(chainSourceExportAction, SIGNAL(triggered()),
@@ -802,6 +799,7 @@ void MainWindow::setActionActivity()
   m_stackActionActivator.registerAction(connFeatExportAction, true);
   m_stackActionActivator.registerAction(chainSourceExportAction, true);
   m_stackActionActivator.registerAction(punctaExportAction, true);
+  m_stackActionActivator.registerAction(m_ui->actionDendrogram_SVG, true);
 
   //objectViewHideAction->setEnabled(b);
   m_stackActionActivator.registerAction(objectViewNormalAction, true);
@@ -962,10 +960,10 @@ void MainWindow::createMenus()
 {
   //the menu bar is created the first time menuBar is called
   exportMenu = m_ui->menuFile->addMenu(tr("&Export"));
-  exportMenu->addAction(bnExportAction);
-  exportMenu->addAction(nsExportAction);
-  exportMenu->addAction(nsMultipleSwcExportAction);
-  exportMenu->addAction(svgExportAction);
+//  exportMenu->addAction(bnExportAction);
+//  exportMenu->addAction(nsExportAction);
+//  exportMenu->addAction(nsMultipleSwcExportAction);
+//  exportMenu->addAction(svgExportAction);
 
 #ifdef _ADVANCED_
   exportMenu->addAction(chainSourceExportAction);
@@ -1263,6 +1261,7 @@ void MainWindow::enableStackActions(bool b)
   connImportAction->setEnabled(b);
   punctaImportAction->setEnabled(b);
 
+  m_ui->actionDendrogram_SVG->setEnabled(b);
   swcExportAction->setEnabled(b);
   svgExportAction->setEnabled(b);
   vrmlExportAction->setEnabled(b);
@@ -7513,4 +7512,9 @@ void MainWindow::MessageProcessor::processMessage(
       break;
     }
   }
+}
+
+void MainWindow::on_actionDendrogram_SVG_triggered()
+{
+  exportSvg();
 }

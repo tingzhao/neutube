@@ -808,7 +808,8 @@ BOOL eqstr(const char *str1, const char *str2)
 {
   if ((str1 == NULL) && (str2 == NULL)) {
     return TRUE;
-  } else if ((str1 == NULL) && (str2 == NULL)) {
+  } else if (((str1 != NULL) && (str2 == NULL)) || 
+      ((str2 != NULL) && (str1 == NULL))) {
     return FALSE;
   } else {
     if (strcmp(str1, str2) == 0) {

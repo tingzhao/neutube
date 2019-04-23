@@ -117,17 +117,16 @@ int parse_arrayflags(void* stream,tz_uint8* flags,tz_uint8* data_class,tz_uint32
   data = *( (tz_uint32*)((byte_t*)stream+data_start) );
   mask_data = data&FLAG_MASK;
 
-  if(!mask_data)
+  if(!mask_data) {
     *flags = 0;
-  else{
+  } else{
     for(i=1;i<4;i++) {
       if(mask_data&0x000000FF)
 	break;
       mask_data >>= 8;
     }
+    *flags = *( (tz_uint8*)(&mask_data) );
   }
-
-  *flags = *( (tz_uint8*)(&mask_data) );
 
   mask_data = data&CLASS_MASK;
 
@@ -304,8 +303,10 @@ int mr_read(const char *filename, Matlab_Array* mr)
 
   fread(tag,8,1,fp);
   int status = parse_tag(tag,&dataType,&dataSize);
-  if(status)
+  if(status) {
+    fclose(fp);
     return status;
+  }
 
   data = malloc(dataSize);
   fread(data,dataSize,1,fp);

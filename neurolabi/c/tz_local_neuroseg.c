@@ -530,7 +530,7 @@ Stack* Local_Neuroseg_Substack(const Local_Neuroseg *seg, const Stack *stack,
    
   Neuroseg_Field_Range(&(seg->seg), range, z_scale);
   
-  if((range->size[0] == 0) || (range->size[0] == 0) || (range->size[0] == 0)) {
+  if((range->size[0] == 0) || (range->size[1] == 0) || (range->size[2] == 0)) {
     printf("Empty range\n");
     TZ_WARN(ERROR_DATA_VALUE);
     return 0;
@@ -3027,7 +3027,6 @@ int Local_Neuroseg_Stack_Feature(Local_Neuroseg *locseg, Stack *stack,
   field2.values = signal;
 
   double vec[3], ext[3];
-  field2.values = signal;
   Geo3d_Scalar_Field_Ort(&field2, vec, ext);
   free(signal);
 
@@ -3895,8 +3894,6 @@ double *Locseg_Conn_Feature(const Local_Neuroseg *locseg1,
   Local_Neuroseg_Bottom(zlocseg2, zbottom2);
   Local_Neuroseg_Top(zlocseg2, ztop2);
   
-  Delete_Local_Neuroseg(zlocseg1);
-  Delete_Local_Neuroseg(zlocseg2);
 
   /* anisotropic planar distance */
   feat[0] = Geo3d_Line_Line_Dist(zbottom1, ztop1, zbottom2, ztop2);
@@ -3931,6 +3928,9 @@ double *Locseg_Conn_Feature(const Local_Neuroseg *locseg1,
 
 /* isotropic surface distance */
   feat[8] = Local_Neuroseg_Lineseg_Dist_S(locseg2, bottom1, top1, NULL);
+
+  Delete_Local_Neuroseg(zlocseg1);
+  Delete_Local_Neuroseg(zlocseg2);
 
   return feat;
 }

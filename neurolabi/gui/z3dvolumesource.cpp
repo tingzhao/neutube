@@ -124,8 +124,8 @@ void Z3DVolumeSource::readVolumes()
         m_isVolumeDownsampled.set(true);
         double scale = std::sqrt((m_maxVoxelNumber*1.0) /
                                  (m_doc->getStack()->getVoxelNumber() * nchannel));
-        int height = (int)(stack->height * scale);
-        int width = (int)(stack->width * scale);
+        int height = std::ceil(stack->height * scale);
+        int width = std::ceil(stack->width * scale);
         int depth = stack->depth;
         double widthScale = 1.0;
         double heightScale = 1.0;
@@ -142,15 +142,15 @@ void Z3DVolumeSource::readVolumes()
 
         if (height > maxTextureSize) {
           heightScale = (double)maxTextureSize / height;
-          height = std::floor(height * heightScale);
+          height = std::ceil(height * heightScale);
         }
         if (width > maxTextureSize) {
           widthScale = (double)maxTextureSize / width;
-          width = std::floor(width * widthScale);
+          width = std::ceil(width * widthScale);
         }
         if (depth > maxTextureSize) {
           depthScale = (double)maxTextureSize / depth;
-          depth = std::floor(depth * depthScale);
+          depth = std::ceil(depth * depthScale);
         }
 
         widthScale *= scale;
@@ -191,15 +191,15 @@ void Z3DVolumeSource::readVolumes()
 
         if (height > maxTextureSize) {
           heightScale = (double)maxTextureSize / height;
-          height = std::floor(height * heightScale);
+          height = std::ceil(height * heightScale);
         }
         if (width > maxTextureSize) {
           widthScale = (double)maxTextureSize / width;
-          width = std::floor(width * widthScale);
+          width = std::ceil(width * widthScale);
         }
         if (depth > maxTextureSize) {
           depthScale = (double)maxTextureSize / depth;
-          depth = std::floor(depth * depthScale);
+          depth = std::ceil(depth * depthScale);
         }
         Stack *stack2;
         if (widthScale != 1.0 || heightScale != 1.0 || depthScale != 1.0) {
@@ -292,17 +292,17 @@ void Z3DVolumeSource::readSparseStack()
     if (height > maxTextureSize) {
       double alpha = (double) maxTextureSize / height;
       heightScale *= alpha;
-      height = (int) (height * alpha);
+      height = std::ceil(height * alpha);
     }
     if (width > maxTextureSize) {
       double alpha = (double) maxTextureSize / width;
       widthScale *= alpha;
-      width = (int) (width * alpha);
+      width = std::ceil(width * alpha);
     }
     if (depth > maxTextureSize) {
       double alpha = (double) maxTextureSize / depth;
       depthScale *= alpha;
-      depth = (int) (depth * alpha);
+      depth = std::ceil(depth * alpha);
     }
 
     ZIntPoint dsIntv2 = misc::getDsIntvFor3DVolume(
@@ -509,8 +509,8 @@ void Z3DVolumeSource::readVolumesWithObject()
         m_isVolumeDownsampled.set(true);
         double scale = std::sqrt((m_maxVoxelNumber*1.0) /
                                  (m_doc->getStack()->getVoxelNumber() * nchannel));
-        int height = (int)(stack->height * scale);
-        int width = (int)(stack->width * scale);
+        int height = std::ceil(stack->height * scale);
+        int width = std::ceil(stack->width * scale);
         int depth = stack->depth;
         double widthScale = 1.0;
         double heightScale = 1.0;
@@ -523,15 +523,15 @@ void Z3DVolumeSource::readVolumesWithObject()
 
         if (height > maxTextureSize) {
           heightScale = (double)maxTextureSize / height;
-          height = std::floor(height * heightScale);
+          height = std::ceil(height * heightScale);
         }
         if (width > maxTextureSize) {
           widthScale = (double)maxTextureSize / width;
-          width = std::floor(width * widthScale);
+          width = std::ceil(width * widthScale);
         }
         if (depth > maxTextureSize) {
           depthScale = (double)maxTextureSize / depth;
-          depth = std::floor(depth * depthScale);
+          depth = std::ceil(depth * depthScale);
         }
 
         widthScale *= scale;
@@ -572,15 +572,15 @@ void Z3DVolumeSource::readVolumesWithObject()
 
         if (height > maxTextureSize) {
           heightScale = (double)maxTextureSize / height;
-          height = std::floor(height * heightScale);
+          height = std::ceil(height * heightScale);
         }
         if (width > maxTextureSize) {
           widthScale = (double)maxTextureSize / width;
-          width = std::floor(width * widthScale);
+          width = std::ceil(width * widthScale);
         }
         if (depth > maxTextureSize) {
           depthScale = (double)maxTextureSize / depth;
-          depth = std::floor(depth * depthScale);
+          depth = std::ceil(depth * depthScale);
         }
         Stack *stack2;
         if (widthScale != 1.0 || heightScale != 1.0)

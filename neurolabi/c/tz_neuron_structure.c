@@ -1191,7 +1191,7 @@ int Neuron_Structure_Conn_Index(const Neuron_Structure *ns, int comp_index)
   int i;
   for (i = 0; i < ns->graph->nedge; i++) {
     if ((GRAPH_EDGE_NODE(ns->graph, i, 0) == comp_index) ||
-	(GRAPH_EDGE_NODE(ns->graph, i, 0) == comp_index)) {
+	(GRAPH_EDGE_NODE(ns->graph, i, 1) == comp_index)) {
       return i;
     }
   }

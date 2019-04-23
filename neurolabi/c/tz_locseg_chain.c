@@ -3171,8 +3171,8 @@ Locseg_Chain_To_Neuron_Component(Locseg_Chain *chain, int type,
       ka->chain = NULL;
       Kill_Locseg_Chain_Knot_Array(ka);
     }
-    */
     break;
+    */
   default:
     TZ_ERROR(ERROR_DATA_TYPE);
   }
@@ -6188,8 +6188,8 @@ Locseg_Chain* Locseg_Chain_From_Skel(int *skel, int n, double sr, double ss,
   Set_Local_Neuroseg(new_seg, sr, 0.0, 1.0, 
 		     0.0, 0.0, 0.0, 0.0, ss, 0.0, 0.0, 0.0);
   if (last_seg != NULL) {
-    new_seg->seg.r1 = new_seg->seg.r1;
-    new_seg->seg.scale = new_seg->seg.scale;
+    new_seg->seg.r1 = last_seg->seg.r1;
+    new_seg->seg.scale = last_seg->seg.scale;
   }
 
   Set_Neuroseg_Position(new_seg, start_pos, NEUROSEG_BOTTOM);

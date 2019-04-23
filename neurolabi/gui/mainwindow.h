@@ -476,6 +476,8 @@ private slots:
 
   void on_actionFlip_Y_triggered();
 
+  void on_actionDendrogram_SVG_triggered();
+
 private:
   void createActions();
   void createFileActions();

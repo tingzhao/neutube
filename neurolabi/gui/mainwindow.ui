@@ -79,6 +79,7 @@
      </property>
      <addaction name="actionMask"/>
      <addaction name="actionSWC_Rescaling"/>
+     <addaction name="actionDendrogram_SVG"/>
     </widget>
     <widget class="QMenu" name="menuOpen_Recent">
      <property name="statusTip">
@@ -1464,6 +1465,11 @@
   <action name="actionFlip_Y">
    <property name="text">
     <string>Flip Y</string>
+   </property>
+  </action>
+  <action name="actionDendrogram_SVG">
+   <property name="text">
+    <string>Dendrogram (SVG)</string>
    </property>
   </action>
  </widget>

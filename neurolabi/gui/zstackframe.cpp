@@ -319,8 +319,8 @@ void ZStackFrame::autoTraceFunc()
   document()->setProgressReporter(&reporter);
 
   executeAutoTraceCommand(m_autoTraceDlg->getTraceLevel(),
-                                 m_autoTraceDlg->resampling(),
-                                 m_autoTraceDlg->getChannel());
+                          m_autoTraceDlg->resampling(),
+                          m_autoTraceDlg->getChannel());
   document()->setProgressReporter(oldReporter);
   emit progressDone();
 }

@@ -1214,7 +1214,6 @@ void Stretch_Stack_Value_Q(Stack *stack, double q)
     }
     break;
   default:
-    free(hist);
     PRINT_EXCEPTION("Unsupported kind", "GREY, GREY16 only.");
   }
   

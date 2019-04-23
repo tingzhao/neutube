@@ -159,6 +159,7 @@ size_t Image_Array_Min_Index_M(const void *array, int kind, size_t length,
   }
 
 #define IMAGE_ARRAY_MINMAX_INDEX_M(array, length, mask, index, i)	\
+  index[0] = index[1] =  0;						\
   if (mask == NULL) {							\
     IMAGE_ARRAY_MINMAX_INDEX(array, length, index, i);			\
   } else {								\

@@ -36,7 +36,7 @@ Object_3d* Object_Intersect(const Object_3d *obj1, const Object_3d *obj2)
 
 
   if (obj1 == obj2) {
-    objs = Object_3d_List_New();
+    //objs = Object_3d_List_New();
     return Copy_Object_3d(obj1);
   }
 

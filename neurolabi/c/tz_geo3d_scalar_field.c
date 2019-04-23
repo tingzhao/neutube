@@ -128,8 +128,10 @@ Geo3d_Scalar_Field* Make_Geo3d_Scalar_Field(int size)
 
 void Kill_Geo3d_Scalar_Field(Geo3d_Scalar_Field *field)
 {
-  Clean_Geo3d_Scalar_Field(field);
-  Delete_Geo3d_Scalar_Field(field);
+  if (field != NULL) {
+    Clean_Geo3d_Scalar_Field(field);
+    Delete_Geo3d_Scalar_Field(field);
+  }
 }
 
 
