@@ -376,7 +376,7 @@ public:
   void importFlyEmNetwork(const char *filePath);
 
   //void exportVrml(const char *filePath);
-  void exportSvg(const char *filePath);
+  void exportSvg(const char *filePath, bool usingSingleColor, const QColor &color);
   void exportBinary(const char *prefix);
   void exportSwcTree(const char *filePath);
   void exportChainFileList(const char *filepath);
@@ -452,6 +452,7 @@ public: //Image processing
   bool invert();
   bool flipY();
   bool subtractBackground();
+  bool subtractBackgroundAdaptive();
   int findLoop(int minLoopSize = 100);
   void bwthin();
   bool bwperim();

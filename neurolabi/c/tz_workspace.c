@@ -386,6 +386,10 @@ void Default_Swc_Tree_Svg_Workspace(Swc_Tree_Svg_Workspace *ws)
   ws->max_vx = 800;
   ws->max_vy = 600;
   ws->weight_option = SWC_SVG_LENGTH_WEIGHT;
+  ws->using_single_color = FALSE;
+  ws->red = 255;
+  ws->green = 0;
+  ws->blue = 0;
 }
 
 void Clean_Swc_Tree_Svg_Workspace(Swc_Tree_Svg_Workspace *ws)

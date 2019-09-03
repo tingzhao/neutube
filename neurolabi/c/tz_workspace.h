@@ -179,6 +179,10 @@ typedef struct _Swc_Tree_Svg_Workspace {
   int max_vx;
   int max_vy;
   int weight_option;
+  BOOL using_single_color;
+  uint8_t red;
+  uint8_t green;
+  uint8_t blue;
 } Swc_Tree_Svg_Workspace;
 
 DECLARE_ZOBJECT_INTERFACE(Swc_Tree_Svg_Workspace)

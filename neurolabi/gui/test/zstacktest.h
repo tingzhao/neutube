@@ -9,6 +9,7 @@
 #include "zdebug.h"
 #include "zintcuboid.h"
 #include "zstackfactory.h"
+#include "zstackprocessor.h"
 
 #ifdef _USE_GTEST_
 TEST(ZStack, Basic)
@@ -254,6 +255,57 @@ TEST(ZStack, BorderShrink)
   C_Stack::shrinkBorder(stack->c_stack(), 1);
 
   Print_Stack_Value(stack->c_stack());
+}
+
+TEST(ZStack, SubtractBackgroundAdaptive)
+{
+  {
+    ZStack *stack = ZStackFactory::makeOneStack(3, 3, 3);
+    ZStackProcessor::SubtractBackgroundAdaptive(stack->c_stack(), 1, 1);
+    ASSERT_DOUBLE_EQ(0.0, stack->max());
+    delete stack;
+  }
+
+  {
+    ZStack *stack = ZStackFactory::makeOneStack(3, 3, 3);
+    ZStackProcessor::SubtractBackgroundAdaptive(stack->c_stack(), 1, 2);
+//    Print_Stack_Value(stack->c_stack());
+    ASSERT_DOUBLE_EQ(1.0, stack->max());
+    delete stack;
+  }
+
+  {
+    ZStack *stack = ZStackFactory::makeOneStack(3, 3, 3);
+    ZStackProcessor::SubtractBackgroundAdaptive(stack->c_stack(), 2, 2);
+    ASSERT_DOUBLE_EQ(1.0, stack->max());
+    delete stack;
+  }
+}
+
+TEST(ZStack, ColorToGrey) {
+  {
+    ZStack *stack = ZStackFactory::makeZeroStack(COLOR, 1, 1, 1, 1);
+    stack->setValue(0, 0, 1);
+    stack->setValue(1, 0, 1);
+    stack->setValue(2, 0, 1);
+
+    Stack *newStack = ZStackProcessor::ColorToGrey(stack->c_stack());
+    ASSERT_EQ(1, C_Stack::value(newStack, 0));
+    delete stack;
+    C_Stack::kill(newStack);
+  }
+
+  {
+    ZStack *stack = ZStackFactory::makeZeroStack(COLOR, 1, 1, 1, 1);
+    stack->setValue(0, 0, 255);
+    stack->setValue(1, 0, 255);
+    stack->setValue(2, 0, 255);
+
+    Stack *newStack = ZStackProcessor::ColorToGrey(stack->c_stack());
+    ASSERT_EQ(255, C_Stack::value(newStack, 0));
+    delete stack;
+    C_Stack::kill(newStack);
+  }
 }
 
 #endif

@@ -16,9 +16,31 @@
 #include "tz_stack_neighborhood.h"
 #include "tz_objdetect.h"
 #include "tz_int_histogram.h"
+#include "zstackfactory.h"
 
 ZStackProcessor::ZStackProcessor()
 {
+}
+
+bool ZStackProcessor::HasData(Stack *stack)
+{
+  if (stack) {
+    if (stack->array &&
+        stack->width > 0 && stack->height > 0 && stack->depth > 0) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+bool ZStackProcessor::HasData(ZStack *stack)
+{
+  if (stack) {
+    return stack->hasData();
+  }
+
+  return false;
 }
 
 void ZStackProcessor::distanceTransform(ZStack *stack, bool isSquared,
@@ -990,6 +1012,191 @@ void ZStackProcessor::ShrinkSkeleton(Stack *stack)
     stack->array[*iter] = 0;
   }
 }
+
+namespace {
+
+//For int type only
+template<typename T>
+void subtract_background_adaptive(T* array, int width, int height, int depth,
+                             int nsample, int stride, T* out)
+{
+  if (nsample > 0 && stride > 0) {
+    size_t area = size_t(width) * height;
+    size_t voxelCount = area * depth;
+
+    bool allocated = false;
+
+    if (array == out) {
+      array = new T[voxelCount];
+      std::memcpy(array, out, voxelCount * sizeof(T));
+      allocated = true;
+    }
+
+    size_t offset = 0;
+    for (int z = 0; z < depth; ++z) {
+      for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+          double backgroundSum = 0;
+          int count = 0;
+          for(int step = 1 ; step <= nsample; ++step) {
+            int dist = stride * step;
+
+            if (x >= dist) { //along -x
+              backgroundSum += array[offset - dist];
+              ++count;
+            }
+
+            if (x + dist < width) { //along x
+              backgroundSum += array[offset + dist];
+              ++count;
+            }
+
+            if (y >= dist) { //along -y
+              backgroundSum += array[offset - dist * width];
+              ++count;
+            }
+
+            if (y + dist < height) { //along y
+              backgroundSum += array[offset + dist * width];
+              ++count;
+            }
+
+            if (z >= dist) { //along -z
+              backgroundSum += array[offset - dist * area];
+              ++count;
+            }
+
+            if (z + dist < depth) { //along z
+              backgroundSum += array[offset + dist * area];
+              ++count;
+            }
+          }
+
+          if (count > 0) {
+            double diff = array[offset] - backgroundSum / count;
+            if (diff < 0) {
+              out[offset] = 0;
+            } else {
+              out[offset] = iround(diff);
+            }
+          } else {
+            out[offset] = array[offset];
+          }
+
+          ++offset;
+        }
+      }
+    }
+
+    if (allocated) {
+      delete []array;
+    }
+  }
+}
+
+}
+
+
+void ZStackProcessor::SubtractBackgroundAdaptive(
+    Stack *stack, int nsample, int stride)
+{
+  if (HasData(stack)) {
+    Image_Array ima;
+    ima.array = stack->array;
+
+    switch (stack->kind) {
+    case GREY:
+      subtract_background_adaptive(
+            ima.array8, stack->width, stack->height, stack->depth,
+            nsample, stride, ima.array8);
+      break;
+    case GREY16:
+      subtract_background_adaptive(
+            ima.array16, stack->width, stack->height, stack->depth,
+            nsample, stride, ima.array16);
+      break;
+    case COLOR:
+      for (int c = 0; c < 3; ++c) {
+        size_t voxelCount = Stack_Voxel_Number(stack);
+        uint8_t *array = stack->array + c * voxelCount;
+        subtract_background_adaptive(
+              array, stack->width, stack->height, stack->depth,
+              nsample, stride, array);
+      }
+      break;
+    default:
+      std::cerr << "Unsupported image kind for adaptive image background subtraction: "
+                << stack->kind << std::endl;
+      break;
+    }
+  }
+}
+
+void ZStackProcessor::SubtractBackgroundAdaptive(
+    ZStack *stack, int nsample, int stride)
+{
+  if (HasData(stack)) {
+    for (int c = 0; c < stack->channelNumber(); ++c) {
+      SubtractBackgroundAdaptive(stack->c_stack(c), nsample, stride);
+    }
+  }
+}
+
+Stack* ZStackProcessor::ColorToGrey(Stack *stack, Stack *out)
+{
+  if (HasData(stack)) {
+    if (stack->kind == COLOR && out->kind == GREY) {
+      if (out == NULL) {
+        out = C_Stack::make(GREY, stack->width, stack->height, stack->depth);
+      }
+      size_t voxelCount = C_Stack::voxelNumber(stack);
+      Image_Array ima;
+      ima.array = stack->array;
+      color_t *inArray = ima.arrayc;
+      uint8_t *outArray = out->array;
+      for (size_t i = 0; i < voxelCount; ++i) {
+        double v = 0.299 * inArray[i][0] + 0.587 * inArray[i][1] +
+            0.114 * inArray[i][2];
+        outArray[i] = iround(v);
+      }
+    }
+  }
+
+  return out;
+}
+
+ZStack* ZStackProcessor::ColorToGrey(ZStack *stack)
+{
+  ZStack *out = NULL;
+  if (HasData(stack)) {
+    if (stack->channelNumber() == 1) {
+      Stack *stackData = stack->c_stack();
+      Stack *outData = ColorToGrey(stackData);
+      if (outData) {
+        out = new ZStack;
+        out->load(outData);
+        out->setOffset(stack->getOffset());
+      }
+    } else if (stack->channelNumber() == 3 && stack->kind() == GREY) {
+      uint8_t* channelData[3];
+      for (int c = 0; c < 3; ++c) {
+        channelData[c] = stack->array8(c);
+      }
+      out = ZStackFactory::makeZeroStack(GREY, stack->getBoundBox());
+      uint8_t* outArray = out->array8();
+      size_t voxelCount = stack->getVoxelNumber();
+      for (size_t i = 0; i < voxelCount; ++i) {
+        double v = 0.299 * channelData[0][i] + 0.587 * channelData[1][i] +
+            0.114 * channelData[2][i];
+        outArray[i] = iround(v);
+      }
+    }
+  }
+
+  return out;
+}
+
+
 /*
 void ZStackProcessor::SubtractBackground(Stack *stack, double minFr, int maxIter)
 {

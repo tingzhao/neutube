@@ -50,6 +50,8 @@ public:
     m_isClickable = state;
   }
 
+  QColor toQColor();
+
 protected:
   virtual void paintEvent(QPaintEvent * e);
   virtual QSize minimumSizeHint() const;
@@ -60,7 +62,6 @@ protected:
   virtual bool getTip(const QPoint &p, QRect *r, QString *s);
   virtual void labelClicked();
 private:
-  QColor toQColor();
   void fromQColor(const QColor &col);
 
 private:

@@ -2724,11 +2724,17 @@ ZSwcTree *ZStackDoc::nodeToSwcTree(Swc_Tree_Node *node) const
   return NULL;
 }
 
-void ZStackDoc::exportSvg(const char *filePath)
+void ZStackDoc::exportSvg(
+    const char *filePath, bool usingSingleColor, const QColor &color)
 {
   QList<ZSwcTree*> swcList = getSwcList();
   if (!swcList.isEmpty()) {
+    misc::ExportSvg(swcList.at(0), filePath, usingSingleColor, color);
+    /*
+    Swc_Tree_To_Svg_File(m_tree, 800, 600, filePath);
+
     swcList.at(0)->toSvgFile(filePath);
+    */
   }
 }
 
@@ -4477,6 +4483,18 @@ bool ZStackDoc::subtractBackground()
   ZStack *mainStack = getStack();
   if (mainStack != NULL) {
     ZStackProcessor::SubtractBackground(mainStack, 0.5, 3);
+    notifyStackModified();
+    return true;
+  }
+
+  return false;
+}
+
+bool ZStackDoc::subtractBackgroundAdaptive()
+{
+  ZStack *mainStack = getStack();
+  if (mainStack != NULL) {
+    ZStackProcessor::SubtractBackgroundAdaptive(mainStack, 5, 3);
     notifyStackModified();
     return true;
   }

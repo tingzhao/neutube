@@ -36,6 +36,7 @@
 #include "dialogs/medianfilterdialog.h"
 #include "dialogs/diffusiondialog.h"
 #include "dialogs/connectedthresholddialog.h"
+#include "dialogs/zswcexportsvgdialog.h"
 #include "zstackpresenter.h"
 #include "zstack.hxx"
 #include "dialogs/zrescaleswcdialog.h"
@@ -435,6 +436,8 @@ void MainWindow::initDialog()
 
   m_skeletonDlg = new FlyEmSkeletonizationDialog(this);
 
+  m_swcExportSvgDlg = new ZSwcExportSvgDialog(this);
+
 #if defined(_FLYEM_)
   m_newBsProjectDialog = new ZFlyEmNewBodySplitProjectDialog(this);
   m_newBsProjectDialog->setDvidDialog(m_dvidDlg);
@@ -821,6 +824,8 @@ void MainWindow::setActionActivity()
   m_stackActionActivator.registerAction(m_ui->actionUpdate, true);
   m_stackActionActivator.registerAction(m_ui->actionFlip_Y, true);
   m_stackActionActivator.registerAction(m_ui->actionSubtract_Background, true);
+  m_stackActionActivator.registerAction(
+        m_ui->actionSubtract_Background_Adaptive_2, true);
 
   m_stackActionActivator.registerAction(m_ui->menuFilter->menuAction(), true);
   m_stackActionActivator.registerAction(m_ui->menuBinary_Morphology->menuAction(), true);
@@ -1836,15 +1841,20 @@ void MainWindow::exportChainFileList()
 }
 void MainWindow::exportSvg()
 {
-  QString fileName = getSaveFileName("Save svg file", "Svg file (*.svg)",
-                                     "./untitled.svg");
+  if (m_swcExportSvgDlg->exec()) {
+    QString fileName = getSaveFileName(
+          "Save SVG file", "SVG file (*.svg)",
+          QFileInfo(m_lastOpenedFilePath).absoluteDir().absolutePath() + "/untitled.svg");
 #if 0
-      QFileDialog::getSaveFileName(this, tr("Save svg file"), "./untitled.svg",
-           tr("Svg file (*.svg)"));
+    QFileDialog::getSaveFileName(this, tr("Save svg file"), "./untitled.svg",
+                                 tr("Svg file (*.svg)"));
 #endif
-  if (!fileName.isEmpty()) {
-    activeStackFrame()->document()->exportSvg(
-          fileName.toLocal8Bit().constData());
+    if (!fileName.isEmpty()) {
+      activeStackFrame()->document()->exportSvg(
+            fileName.toLocal8Bit().constData(),
+            m_swcExportSvgDlg->usingSingleColor(),
+            m_swcExportSvgDlg->getColor());
+    }
   }
 }
 
@@ -7517,4 +7527,34 @@ void MainWindow::MessageProcessor::processMessage(
 void MainWindow::on_actionDendrogram_SVG_triggered()
 {
   exportSvg();
+}
+
+void MainWindow::on_actionSubtract_Background_Adaptive_2_triggered()
+{
+  ZStackFrame *frame = activeStackFrame();
+  if (frame != NULL) {
+    frame->subtractBackgroundAdaptive();
+  }
+}
+
+void MainWindow::on_actionColor_Gray_triggered()
+{
+  ZStackFrame *frame = currentStackFrame();
+  if (frame != NULL) {
+    getProgressDialog()->setRange(0, 100);
+    getProgressDialog()->setLabelText(QString("Producing gray stack ..."));
+    getProgressDialog()->show();
+
+    getProgressDialog()->setValue(25);
+
+    ZStack *stack = frame->document()->getStack();
+    ZStack *newStack = ZStackProcessor::ColorToGrey(stack);
+    if (newStack) {
+      ZStackFrame *newFrame = createStackFrame(newStack);
+      addStackFrame(newFrame);
+      presentStackFrame(newFrame);
+    }
+
+    getProgressDialog()->reset();
+  }
 }

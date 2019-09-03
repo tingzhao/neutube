@@ -4292,9 +4292,15 @@ void Swc_Tree_To_Svg_File_W(Swc_Tree *tree, const char *file,
         Svg_Polygonal_Chain_Fprint(fp, pa, "jet", 2); 
         Kill_Geo3d_Point_Array(pa);
       } else {
-        fprintf(fp, "<line x1=\"%g\" y1=\"%g\" x2=\"%g\" y2 = \"%g\" "
-            "stroke=\"%s\" stroke-width=\"2\"/>\n", x1, y1, x2, y2,
-            Swc_Node_Color_Code(Swc_Tree_Node_Data(node)));
+        if (ws->using_single_color == TRUE) {
+            fprintf(fp, "<line x1=\"%g\" y1=\"%g\" x2=\"%g\" y2 = \"%g\" "
+                        "stroke=\"rgb(%u, %u, %u)\" stroke-width=\"2\"/>\n", x1, y1, x2, y2,
+                    ws->red, ws->green, ws->blue);
+        } else {
+            fprintf(fp, "<line x1=\"%g\" y1=\"%g\" x2=\"%g\" y2 = \"%g\" "
+                        "stroke=\"%s\" stroke-width=\"2\"/>\n", x1, y1, x2, y2,
+                    Swc_Node_Color_Code(Swc_Tree_Node_Data(node)));
+        }
       }
     }
 

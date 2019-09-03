@@ -56,6 +56,11 @@ public:
 
   static void FlipY(ZStack *stack);
 
+  static void SubtractBackgroundAdaptive(Stack *stack, int nsample, int stride);
+  static void SubtractBackgroundAdaptive(ZStack *stack, int nsample, int stride);
+
+  static Stack* ColorToGrey(Stack *stack, Stack *out = NULL);
+  static ZStack* ColorToGrey(ZStack *stack);
 
 //private:
   static void convertStack(ZStack *stack, Uint8Image3DType *image);
@@ -70,6 +75,8 @@ public:
 
 private:
   static void ShrinkSkeleton(Stack *stack);
+  static bool HasData(Stack *stack);
+  static bool HasData(ZStack *stack);
 };
 
 #endif // ZSTACKPROCESSOR_H

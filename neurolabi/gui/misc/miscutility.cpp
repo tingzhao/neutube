@@ -653,3 +653,26 @@ double misc::SampleStack(
 
   return v;
 }
+
+bool misc::ExportSvg(
+    const ZSwcTree *tree, const string &filePath,
+    bool usingSingleColor, const QColor &color)
+{
+  if (tree && !filePath.empty()) {
+    Swc_Tree_Svg_Workspace *ws = New_Swc_Tree_Svg_Workspace();
+    ws->max_vx = 800;
+    ws->max_vy = 600;
+    if (usingSingleColor) {
+      ws->using_single_color = TRUE;
+      ws->red = color.red();
+      ws->green = color.green();
+      ws->blue = color.blue();
+    }
+    Swc_Tree_To_Svg_File_W(tree->data(), filePath.c_str(), ws);
+    Kill_Swc_Tree_Svg_Workspace(ws);
+
+    return true;
+  }
+
+  return false;
+}

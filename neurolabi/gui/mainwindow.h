@@ -74,6 +74,7 @@ class ProjectionDialog;
 class ZStackSkeletonizer;
 class FlyEmSkeletonizationDialog;
 class ZWidgetMessage;
+class ZSwcExportSvgDialog;
 
 namespace Ui {
   class MainWindow;
@@ -478,6 +479,10 @@ private slots:
 
   void on_actionDendrogram_SVG_triggered();
 
+  void on_actionSubtract_Background_Adaptive_2_triggered();
+
+  void on_actionColor_Gray_triggered();
+
 private:
   void createActions();
   void createFileActions();
@@ -696,6 +701,7 @@ private:
   ZAutoTraceDialog *m_autoTraceDlg;
   ProjectionDialog *m_projDlg;
   FlyEmSkeletonizationDialog *m_skeletonDlg;
+  ZSwcExportSvgDialog *m_swcExportSvgDlg;
 
   ZStackViewManager *m_stackViewManager;
   ZFlyEmProjectManager *m_flyemProjectManager;

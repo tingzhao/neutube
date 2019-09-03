@@ -128,7 +128,6 @@ contains(CONFIG, static_gtest) { # gtest from ext folder
 LIBS += -lstdc++
 
 unix {
-
     macx {
         DEFINES += _NEUTUBE_MAC_
         LIBS += -framework AppKit -framework IOKit \
@@ -613,7 +612,8 @@ HEADERS += mainwindow.h \
     flyem/zflyemtodoitem.h \
     flyem/zflyemtodolist.h \
     dialogs/zswcisolationdialog.h \
-    dialogs/zstackframesettingdialog.h
+    dialogs/zstackframesettingdialog.h \
+    dialogs/zswcexportsvgdialog.h
 
 FORMS += dialogs/settingdialog.ui \
     dialogs/frameinfodialog.ui \
@@ -689,7 +689,8 @@ FORMS += dialogs/settingdialog.ui \
     dialogs/stringlistdialog.ui \
     dialogs/zswcisolationdialog.ui \
     dialogs/zautotracedialog.ui \
-    dialogs/zstackframesettingdialog.ui
+    dialogs/zstackframesettingdialog.ui \
+    dialogs/zswcexportsvgdialog.ui
 SOURCES += main.cpp \
     mainwindow.cpp \
     zstackview.cpp \
@@ -1075,7 +1076,8 @@ SOURCES += main.cpp \
     flyem/zflyemtodoitem.cpp \
     flyem/zflyemtodolist.cpp \
     dialogs/zswcisolationdialog.cpp \
-    dialogs/zstackframesettingdialog.cpp
+    dialogs/zstackframesettingdialog.cpp \
+    dialogs/zswcexportsvgdialog.cpp
 
 OTHER_FILES += \
     extlib.pri \

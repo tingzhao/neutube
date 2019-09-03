@@ -172,13 +172,22 @@
       <addaction name="actionAnisotropic_Diffusion"/>
       <addaction name="actionMexican_Hat"/>
      </widget>
-     <addaction name="actionBinarize"/>
+     <widget class="QMenu" name="menuIntensity">
+      <property name="title">
+       <string>Intensity</string>
+      </property>
+      <addaction name="actionBinarize"/>
+      <addaction name="actionInvert"/>
+      <addaction name="actionColor_Gray"/>
+      <addaction name="separator"/>
+      <addaction name="actionSubtract_Background"/>
+      <addaction name="actionSubtract_Background_Adaptive_2"/>
+     </widget>
      <addaction name="actionUpdate"/>
-     <addaction name="actionExtract_Channel"/>
-     <addaction name="actionInvert"/>
      <addaction name="actionFlip_Y"/>
      <addaction name="actionMake_Projection"/>
-     <addaction name="actionSubtract_Background"/>
+     <addaction name="actionExtract_Channel"/>
+     <addaction name="menuIntensity"/>
      <addaction name="menuFilter"/>
      <addaction name="menuBinary_Morphology"/>
      <addaction name="menuSegmentation"/>
@@ -1470,6 +1479,16 @@
   <action name="actionDendrogram_SVG">
    <property name="text">
     <string>Dendrogram (SVG)</string>
+   </property>
+  </action>
+  <action name="actionSubtract_Background_Adaptive_2">
+   <property name="text">
+    <string>Subtract Background (Adaptive)</string>
+   </property>
+  </action>
+  <action name="actionColor_Gray">
+   <property name="text">
+    <string>Color-&gt;Gray</string>
    </property>
   </action>
  </widget>

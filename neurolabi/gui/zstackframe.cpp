@@ -1537,6 +1537,13 @@ void ZStackFrame::subtractBackground()
   }
 }
 
+void ZStackFrame::subtractBackgroundAdaptive()
+{
+  if (m_doc->hasStackData()) {
+    m_doc->subtractBackgroundAdaptive();
+  }
+}
+
 void ZStackFrame::detachParentFrame()
 {
   if (m_parentFrame != NULL) {

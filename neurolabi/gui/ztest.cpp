@@ -269,6 +269,7 @@ using namespace std;
 #include "flyem/zflyemorthodoc.h"
 #include "flyem/zflyemorthowindow.h"
 #include "zswcconnector.h"
+#include "dialogs/zswcexportsvgdialog.h"
 
 using namespace std;
 
@@ -19841,6 +19842,11 @@ void ZTest::test(MainWindow *host)
   std::cout << "Consistency: " << tree.isIdConsistent() << std::endl;
 
   tree.save(GET_TEST_DATA_DIR + "/test.swc");
+#endif
+
+#if 1
+  ZSwcExportSvgDialog *dlg = new ZSwcExportSvgDialog(host);
+  dlg->exec();
 #endif
 
   std::cout << "Done." << std::endl;

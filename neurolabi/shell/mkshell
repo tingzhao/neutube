@@ -10,12 +10,15 @@ else
     else
 	echo '#!/bin/bash' > $1
 	echo ' ' >> $1
+        if [[ ! -z $2 ]]
+        then
+          echo "if [[ \$# -ne $2 ]]; then" >> $1
+          echo "  echo 'Usage: $1 <>'" >> $1
+          echo "  exit 1" >> $1
+          echo "fi" >> $1
+        fi
+
 	chmod a+x $1
 	echo "$1 created"
-    fi
-    
-    if test -d '/Applications/Aquamacs Emacs.app'
-    then
-	open -a '/Applications/Aquamacs Emacs.app' $1
     fi
 fi

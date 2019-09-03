@@ -74,6 +74,9 @@ std::set<T> intersect(const std::set<T> &s1, const std::set<T> &s2);
 
 template<typename T>
 std::set<T> setdiff(const std::set<T> &s1, const std::set<T> &s2);
+
+bool ExportSvg(const ZSwcTree *tree, const std::string &filePath,
+    bool usingSingleColor, const QColor &color);
 }
 
 // generic solution
